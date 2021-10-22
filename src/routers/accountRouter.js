@@ -8,10 +8,16 @@ const accountValidate = require('../middleware/validator/accountValidate');
 
 router.post(
   '/signup',
-  validate.validateBody(accountValidate.SchemaAccount.signup),
+  validate.validateBody(accountValidate.signup),
   accountController.signup,
 );
 
 router.post('/signin', accountController.signin);
+
+router.post(
+  '/forgotPassword',
+  validate.validateBody(accountValidate.forgetpassword),
+  accountController.forgotPassword,
+);
 
 module.exports = router;

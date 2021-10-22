@@ -9,9 +9,9 @@ const SchemaAccount = {
     DOB: joi.string(),
     Address: joi.string(),
   }),
-  // forgetpassword: joi.object().keys({
-  //   Gmail: joi.string().email().required(),
-  // }),
+  forgetpassword: joi.object().keys({
+    Email: joi.string().email().required(),
+  }),
   // changepassword: joi.object().keys({
   //   Password: joi.string().required(),
   //   NewPassword: joi.string().required(),
@@ -24,4 +24,4 @@ const SchemaAccount = {
   // }),
 };
 
-module.exports = { SchemaAccount };
+module.exports = SchemaAccount;

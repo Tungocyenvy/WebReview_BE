@@ -1,6 +1,8 @@
 const { createToken } = require('./jwtService');
 const bcrypt = require('bcrypt');
 const Account = require('../models/accountModel');
+const rand = require('random');
+const { SendMailVetify } = require('./SendMailService');
 
 // Sign UP
 const SignupService = async (body) => {
@@ -107,7 +109,42 @@ const SigninService = async (body) => {
   }
 };
 
+// forget password
+const ForgetPasswordService = async (body) => {
+  try {
+    let { Email } = body;
+    Email = Email.trim();
+    const account = await Account.findOne({ Email });
+    let random = rand.int((min = 100000), (max = 999999));
+    random = random + '';
+    if (account) {
+      const saltOrRound = 8;
+      const hassPassword = await bcrypt.hash(random, saltOrRound);
+      account.PassWord = hassPassword;
+      await account.save();
+      const resMail = SendMailVetify(
+        Email,
+        'Mật Khẩu mới của bạn',
+        random,
+        null,
+      );
+      return {
+        msg: 'Get Password Success',
+        statusCode: 200,
+      };
+    } else {
+      return {
+        msg: 'Get Password false',
+        statusCode: 300,
+      };
+    }
+  } catch (err) {
+    console.log(err);
+  }
+};
+
 module.exports = {
   SignupService,
   SigninService,
+  ForgetPasswordService,
 };
