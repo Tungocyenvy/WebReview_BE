@@ -150,11 +150,10 @@ const ChangePasswordService = async (IDToken, body) => {
   NewPassword = NewPassword.trim();
   ConfirmPassword = ConfirmPassword.trim();
 
-  const account = await Account.findOne({ Email: IDToken });
-
-  const hashPassword = account.PassWord;
-  const result = await bcrypt.compare(PassWord, hashPassword);
   try {
+    const account = await Account.findOne({ Email: IDToken });
+    const hashPassword = account.PassWord;
+    const result = await bcrypt.compare(PassWord, hashPassword);
     if (result) {
       if (NewPassword === ConfirmPassword) {
         const saltOrRound = 8;
@@ -185,9 +184,57 @@ const ChangePasswordService = async (IDToken, body) => {
   }
 };
 
+//get Infor User
+const getUserDataSerice = async (body) => {
+  let { Email } = body;
+  console.log(Email);
+  try {
+    const data = await Account.findOne({ Email });
+    if (!data) {
+      return {
+        msg: 'User not Found',
+        statusCode: 300,
+      };
+    } else {
+      return {
+        msg: 'get Data User Successful',
+        statusCode: 200,
+        data: data,
+      };
+    }
+  } catch {
+    return {
+      msg: 'Error while get Data User',
+      statusCode: 300,
+    };
+  }
+};
+
+const UpdateUserService = async (Email, body) => {
+  try {
+    console.log(Email);
+    const data = await Account.findOneAndUpdate({ Email: Email }, body);
+    console.log(data);
+    //check data null
+    return {
+      msg: 'update Data User success',
+      statusCode: 200,
+      data: data,
+    };
+  } catch (err) {
+    console.log(err);
+    return {
+      msg: 'Error whilte update data Customer',
+      statusCode: 300,
+    };
+  }
+};
+
 module.exports = {
   SignupService,
   SigninService,
   ForgetPasswordService,
   ChangePasswordService,
+  getUserDataSerice,
+  UpdateUserService,
 };

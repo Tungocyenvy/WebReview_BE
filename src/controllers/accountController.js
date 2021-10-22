@@ -55,4 +55,40 @@ const changePassword = async (req, res, next) => {
   return controller.sendSuccess(res, {}, resService.statusCode, resService.msg);
 };
 
-module.exports = { signup, signin, forgotPassword, changePassword };
+const getDataUSer = async (req, res, next) => {
+  const token = req.value.body.token.data;
+  const resService = await accountService.getUserDataSerice({ Email: token });
+  if (resService.statusCode === 200) {
+    return controller.sendSuccess(
+      res,
+      resService.data,
+      resService.statusCode,
+      resService.msg,
+    );
+  }
+  return controller.sendSuccess(res, {}, resService.statusCode, resService.msg);
+};
+
+const updateUser = async (req, res, next) => {
+  // const TokenID = req.value.body.token?.data;
+  const { token, ...data } = req.value.body;
+  const resService = await accountService.UpdateUserService(token.data, data);
+  if (resService.statusCode === 200) {
+    return controller.sendSuccess(
+      res,
+      resService.data,
+      resService.statusCode,
+      resService.msg,
+    );
+  }
+  return controller.sendSuccess(res, {}, resService.statusCode, resService.msg);
+};
+
+module.exports = {
+  signup,
+  signin,
+  forgotPassword,
+  changePassword,
+  getDataUSer,
+  updateUser,
+};

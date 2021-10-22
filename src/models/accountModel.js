@@ -6,6 +6,7 @@ const AccountSchema = new schema({
   PassWord: { type: String, require: true },
   Email: { type: String, require: true },
   Type: { type: String, require: true },
+  FullName: { type: String, require: true },
   DOB: { type: String, require: true },
   Address: { type: String, require: true },
   IsAdmin: { type: Boolean, require: true },

@@ -27,4 +27,13 @@ router.post(
   accountController.changePassword,
 );
 
+router.get('/getUser', jwt.verify, accountController.getDataUSer);
+
+router.post(
+  '/updateUser',
+  jwt.verify,
+  validate.validateBody(accountValidate.updateuser),
+  accountController.updateUser,
+);
+
 module.exports = router;
