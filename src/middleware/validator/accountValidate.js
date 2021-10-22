@@ -12,11 +12,11 @@ const SchemaAccount = {
   forgetpassword: joi.object().keys({
     Email: joi.string().email().required(),
   }),
-  // changepassword: joi.object().keys({
-  //   Password: joi.string().required(),
-  //   NewPassword: joi.string().required(),
-  //   ConfirmPassword: joi.string().required(),
-  // }),
+  changepassword: joi.object().keys({
+    PassWord: joi.string().min(6).required(),
+    NewPassword: joi.string().min(6).required(),
+    ConfirmPassword: joi.string().min(6).required(),
+  }),
   // updatecustomer: joi.object().keys({
   //   FirstName: joi.string(),
   //   LastName: joi.string(),

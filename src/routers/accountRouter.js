@@ -20,4 +20,11 @@ router.post(
   accountController.forgotPassword,
 );
 
+router.post(
+  '/changePassword',
+  validate.validateBody(accountValidate.changepassword),
+  jwt.verify,
+  accountController.changePassword,
+);
+
 module.exports = router;

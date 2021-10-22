@@ -37,4 +37,22 @@ const forgotPassword = async (req, res, next) => {
   return controller.sendSuccess(res, {}, resService.statusCode, resService.msg);
 };
 
-module.exports = { signup, signin, forgotPassword };
+const changePassword = async (req, res, next) => {
+  const tokenID = req.value.body.token.data;
+  console.log(req.value.body.token.data);
+  const resService = await accountService.ChangePasswordService(
+    tokenID,
+    req.body,
+  );
+  if (resService.statusCode === 200) {
+    return controller.sendSuccess(
+      res,
+      resService.data,
+      resService.statusCode,
+      resService.msg,
+    );
+  }
+  return controller.sendSuccess(res, {}, resService.statusCode, resService.msg);
+};
+
+module.exports = { signup, signin, forgotPassword, changePassword };

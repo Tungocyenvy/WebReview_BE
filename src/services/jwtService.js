@@ -15,4 +15,59 @@ function createToken(data) {
   );
 }
 
-module.exports = { createToken };
+async function verify(req, res, next) {
+  try {
+    const header = req.headers.authorization;
+    //headers
+    /*
+          authorization
+          content
+      */
+
+    if (!header) {
+      res.json({
+        data: {
+          tokenVerificationData: {
+            access: false,
+            message: 'No token provided',
+          },
+        },
+      });
+      return;
+    }
+    const token = header.split(' ')[1];
+    console.log('tokenService token : ' + token);
+    jwt.verify(token, serectKey, (err, decodedFromToken) => {
+      if (err) {
+        console.log('err');
+        res.json({
+          data: {
+            tokenVerificationData: {
+              access: false,
+              message: 'Failed to verify token',
+            },
+          },
+        });
+        return;
+      } else {
+        const idUser = decodedFromToken.data;
+        if (!req.value) req.value = {};
+        if (!req.value.body) req.value.body = {};
+        req.value = { body: { token: decodedFromToken } };
+        next();
+      }
+    });
+  } catch (err) {
+    console.log(err);
+    return res.json({
+      data: {
+        tokenVerificationData: {
+          access: false,
+          message: 'Failed to verify token',
+        },
+      },
+    });
+  }
+}
+
+module.exports = { createToken, verify };

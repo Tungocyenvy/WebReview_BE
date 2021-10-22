@@ -143,8 +143,51 @@ const ForgetPasswordService = async (body) => {
   }
 };
 
+// Change Password
+const ChangePasswordService = async (IDToken, body) => {
+  let { PassWord, NewPassword, ConfirmPassword } = body;
+  PassWord = PassWord.trim();
+  NewPassword = NewPassword.trim();
+  ConfirmPassword = ConfirmPassword.trim();
+
+  const account = await Account.findOne({ Email: IDToken });
+
+  const hashPassword = account.PassWord;
+  const result = await bcrypt.compare(PassWord, hashPassword);
+  try {
+    if (result) {
+      if (NewPassword === ConfirmPassword) {
+        const saltOrRound = 8;
+        const HashNewPassword = await bcrypt.hash(NewPassword, saltOrRound);
+        account.PassWord = HashNewPassword;
+        await account.save();
+        return {
+          msg: 'Change Password Success',
+          statusCode: 200,
+        };
+      } else {
+        return {
+          msg: 'New Password and Comfirm Password not match',
+          statusCode: 300,
+        };
+      }
+    } else {
+      return {
+        msg: 'the password is incorrect!',
+        statusCode: 300,
+      };
+    }
+  } catch {
+    return {
+      msg: 'Error while change Password',
+      statusCode: 300,
+    };
+  }
+};
+
 module.exports = {
   SignupService,
   SigninService,
   ForgetPasswordService,
+  ChangePasswordService,
 };
