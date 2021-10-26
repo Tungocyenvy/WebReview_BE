@@ -8,6 +8,10 @@ db.connectDb();
 
 const app = express();
 
+//Implement cors
+app.use(cors());
+//Access-Controll-Allow-Origin
+app.options('*', cors());
 
 app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
