@@ -8,6 +8,7 @@ const SchemaAccount = {
     FullName: joi.string().required(),
     DOB: joi.string(),
     Address: joi.string(),
+    Confirm: joi.string(),
   }),
   forgetpassword: joi.object().keys({
     Email: joi.string().email().required(),

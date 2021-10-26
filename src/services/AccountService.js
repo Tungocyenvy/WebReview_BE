@@ -61,12 +61,10 @@ const SignupService = async (body) => {
 
 // Sign in
 const SigninService = async (body) => {
-  let { User, PassWord } = body;
-  User = User.trim();
-  PassWord = PassWord.trim();
+  let { UserName, PassWord } = body;
 
-  const Email = User;
-  const UserName = User;
+  const Email = UserName;
+  //const UserName = UserName;
 
   // kiểm tra tài khoản tồn tại trong Account chưa
   var data = await Account.findOne({ Email });
@@ -113,7 +111,6 @@ const SigninService = async (body) => {
 const ForgetPasswordService = async (body) => {
   try {
     let { Email } = body;
-    Email = Email.trim();
     const account = await Account.findOne({ Email });
     let random = rand.int((min = 100000), (max = 999999));
     random = random + '';
@@ -146,9 +143,6 @@ const ForgetPasswordService = async (body) => {
 // Change Password
 const ChangePasswordService = async (IDToken, body) => {
   let { PassWord, NewPassword, ConfirmPassword } = body;
-  PassWord = PassWord.trim();
-  NewPassword = NewPassword.trim();
-  ConfirmPassword = ConfirmPassword.trim();
 
   try {
     const account = await Account.findOne({ Email: IDToken });
