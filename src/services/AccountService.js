@@ -13,7 +13,7 @@ const SignupService = async (body) => {
       if (result.length > 0) {
         //checkemail
         return {
-          msg: 'Email is existed',
+          msg: 'Email này đã tồn tại!',
           statusCode: 300,
         };
       } else {
@@ -38,13 +38,13 @@ const SignupService = async (body) => {
         if (resSave) {
           const DataUser = resSave.Token;
           return {
-            msg: 'SignUp SuccessFull',
+            msg: 'Đăng ký thành công',
             statusCode: 200,
             data: DataUser,
           };
         } else {
           return {
-            msg: 'Error while saving new Customer',
+            msg: 'Lỗi! Không thể thêm tài khoản',
             statusCode: 300,
           };
         }
@@ -53,7 +53,7 @@ const SignupService = async (body) => {
   } catch (err) {
     console.log(err);
     return {
-      msg: 'Error while checking existed Customer',
+      msg: 'Lỗi trong khi kiểm tra email',
       statusCode: 300,
     };
   }
@@ -80,7 +80,7 @@ const SigninService = async (body) => {
         const id = data._id;
         const token = createToken(id);
         return {
-          msg: 'Sign In Successful ',
+          msg: 'Đăng nhập thành công!',
           statusCode: 200,
           data: {
             Token: token,
@@ -89,19 +89,19 @@ const SigninService = async (body) => {
         };
       } else {
         return {
-          msg: 'Incorrect Password',
+          msg: 'Password không đúng!',
           statusCode: 300,
         };
       }
     } catch {
       return {
-        msg: 'Error while checking password',
+        msg: 'Xảy ra lỗi trong quá trình đăng nhập',
         statusCode: 300,
       };
     }
   } else {
     return {
-      msg: 'Account is not exist',
+      msg: 'Tài khoản không tồn tại',
       statusCode: 300,
     };
   }
@@ -126,12 +126,12 @@ const ForgetPasswordService = async (body) => {
         null,
       );
       return {
-        msg: 'Get Password Success',
+        msg: 'Vui lòng kiểm tra email để nhận mật khẩu mới',
         statusCode: 200,
       };
     } else {
       return {
-        msg: 'Get Password false',
+        msg: 'Lấy mật khẩu mới không thành công',
         statusCode: 300,
       };
     }
@@ -155,24 +155,24 @@ const ChangePasswordService = async (IDToken, body) => {
         account.PassWord = HashNewPassword;
         await account.save();
         return {
-          msg: 'Change Password Success',
+          msg: 'Đổi mật khẩu thành công!',
           statusCode: 200,
         };
       } else {
         return {
-          msg: 'New Password and Comfirm Password not match',
+          msg: 'Mật khẩu không trùng khớp!',
           statusCode: 300,
         };
       }
     } else {
       return {
-        msg: 'the password is incorrect!',
+        msg: 'Mật khẩu hiện tại không đúng',
         statusCode: 300,
       };
     }
   } catch {
     return {
-      msg: 'Error while change Password',
+      msg: 'Xảy ra lỗi trong quá trình đổi mật khẩu',
       statusCode: 300,
     };
   }
@@ -186,19 +186,19 @@ const getUserDataSerice = async (body) => {
     const data = await Account.findOne({ Email });
     if (!data) {
       return {
-        msg: 'User not Found',
+        msg: 'Không tìm thấy tài khoản',
         statusCode: 300,
       };
     } else {
       return {
-        msg: 'get Data User Successful',
+        msg: 'Lấy thông tin người dùng thành công',
         statusCode: 200,
         data: data,
       };
     }
   } catch {
     return {
-      msg: 'Error while get Data User',
+      msg: 'Xảy ra lỗi trong quá trình lấy thông tin',
       statusCode: 300,
     };
   }
@@ -211,14 +211,14 @@ const UpdateUserService = async (Email, body) => {
     console.log(data);
     //check data null
     return {
-      msg: 'update Data User success',
+      msg: 'Cập nhập thông tin thành công',
       statusCode: 200,
       data: data,
     };
   } catch (err) {
     console.log(err);
     return {
-      msg: 'Error whilte update data Customer',
+      msg: 'Xảy ra lỗi trong quá trình thay đổi thông tin',
       statusCode: 300,
     };
   }

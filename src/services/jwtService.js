@@ -44,7 +44,7 @@ async function verify(req, res, next) {
           data: {
             tokenVerificationData: {
               access: false,
-              message: 'Failed to verify token',
+              message: 'Lỗi khi xác thực token',
             },
           },
         });
@@ -63,7 +63,7 @@ async function verify(req, res, next) {
       data: {
         tokenVerificationData: {
           access: false,
-          message: 'Failed to verify token',
+          message: 'Lỗi khi xác thực token',
         },
       },
     });

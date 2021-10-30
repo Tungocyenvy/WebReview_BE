@@ -21,9 +21,9 @@ function SendMailVetify(toMail, sub, text, html) {
 
   transporter.sendMail(mailOptions, function (error, info) {
     if (error) {
-      console.log('Error sendMail');
+      console.log('Lỗi trong khi gửi email');
     } else {
-      console.log('Send Mail Successful');
+      console.log('Gửi email thành công');
     }
   });
 }
