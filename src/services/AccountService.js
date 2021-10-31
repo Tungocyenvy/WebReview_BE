@@ -77,8 +77,9 @@ const SigninService = async (body) => {
     const result = await bcrypt.compare(PassWord, hashPassword);
     try {
       if (result) {
-        const id = data._id;
-        const token = createToken(id);
+        //const id = data._id;
+        //const token = createToken(id);
+        const token = data.Token;
         return {
           msg: 'Đăng nhập thành công!',
           statusCode: 200,
