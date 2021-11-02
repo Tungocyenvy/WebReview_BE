@@ -22,6 +22,7 @@ const SchemaAccount = {
     FullName: joi.string().required(),
     DOB: joi.string(),
     Address: joi.string(),
+    Avatar: joi.string(),
   }),
 };
 

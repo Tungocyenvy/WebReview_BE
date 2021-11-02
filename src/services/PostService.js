@@ -21,13 +21,20 @@ const getReview = async (body) => {
     }
     review = review.Post;
 
+    //Lấy bài viết đã duyệt
     for (const k in review) {
       if (!review[k].Status) {
         review.remove(review[k]);
       }
     }
-    //const review = await data.find ({Id});
-    console.log(review);
+    console.log('review:' + review);
+
+    //lấy ra 15 bài review mới nhất
+    let topreview = Array.from(review);
+    topreview.reverse();
+    topreview = topreview.slice(0, 16);
+    console.log('Index:' + topreview);
+
     if (!review) {
       return {
         msg: 'Không có bài review nào!',
@@ -37,7 +44,7 @@ const getReview = async (body) => {
       return {
         msg: 'Lấy tất cả bài review thành công!',
         statusCode: 200,
-        data: review,
+        data: { review, topreview },
       };
     }
   } catch {
@@ -65,12 +72,21 @@ const getExperience = async (body) => {
 
     experience = experience.Post;
 
+    //Lấy bài chia sẻ đã duyệt
     for (const k in experience) {
       if (!experience[k].Status) {
         experience.remove(experience[k]);
       }
     }
-    console.log(experience);
+    console.log('all:' + experience);
+
+    //Lấy ra 5 bài kinh nghiệm mới nhất
+    let toprexp = Array.from(experience);
+    toprexp.reverse();
+    toprexp = toprexp.slice(0, 6);
+
+    console.log('Index:' + toprexp);
+
     if (!experience) {
       return {
         msg: 'Không có bài chia sẻ kinh nghiệm nào!',
@@ -80,7 +96,7 @@ const getExperience = async (body) => {
       return {
         msg: 'Lấy tất cả bài chia sẻ kinh nghiệm thành công!',
         statusCode: 200,
-        data: experience,
+        data: { experience, toprexp },
       };
     }
   } catch {
