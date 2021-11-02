@@ -3,7 +3,9 @@ const bcrypt = require('bcrypt');
 const Post = require('../models/postModel');
 const rand = require('random');
 const { SendMailVetify } = require('./SendMailService');
+const { findOneAndRemove } = require('../models/postModel');
 
+//REVIEW
 // get Post review
 const getReview = async (body) => {
   try {
@@ -15,6 +17,13 @@ const getReview = async (body) => {
       if (data[i].Id == Id) {
         review = data[i];
         break;
+      }
+    }
+    review = review.Post;
+
+    for (const k in review) {
+      if (!review[k].Status) {
+        review.remove(review[k]);
       }
     }
     //const review = await data.find ({Id});
@@ -39,7 +48,8 @@ const getReview = async (body) => {
   }
 };
 
-// get Post Experient
+//EXPERIENCE
+// get Post Experience
 const getExperience = async (body) => {
   try {
     const Id = 'Experience';
@@ -50,6 +60,14 @@ const getExperience = async (body) => {
       if (data[i].Id == Id) {
         experience = data[i];
         break;
+      }
+    }
+
+    experience = experience.Post;
+
+    for (const k in experience) {
+      if (!experience[k].Status) {
+        experience.remove(experience[k]);
       }
     }
     console.log(experience);
