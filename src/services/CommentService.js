@@ -14,6 +14,29 @@ const getRandomString = (length, base) => {
   }
   return 'CMT' + result;
 };
+//get comment
+// const GetComment = async () => {
+//   try {
+//     const comment = await Comment.find({});
+//     if (!comment) {
+//       return {
+//         msg: 'Không có bình luận nào!',
+//         statusCode: 300,
+//       };
+//     } else {
+//       return {
+//         msg: 'Lấy tất cả bình luận thành công!',
+//         statusCode: 200,
+//         data: { comment },
+//       };
+//     }
+//   } catch (error) {
+//     return {
+//       msg: 'Xảy ra lỗi trong quá trình lấy thông tin',
+//       statusCode: 300,
+//     };
+//   }
+// }
 
 //post comment
 const PostComment = async (token, body) => {
@@ -27,23 +50,34 @@ const PostComment = async (token, body) => {
     var randomId = '';
     while (flag == true) {
       //kiểm tra trùng
+      console.log(1);
       var randomId = getRandomString(6, base);
       const cmt = await Comment.findOne({ _id: randomId });
       if (!cmt) {
+        console.log(2);
         flag = false;
       }
     }
+    // console.log(randomId);
+    // console.log(Email);
+    // console.log(Content);
+    // console.log(PostId);
     const newComment = new Comment({
       _id: randomId,
       Email: Email,
       Content,
       PostId,
+      Reply: '',
       CreateAt: Date.now(),
     });
-    await newComment.save();
+    console.log(typeof CreateAt);
+    console.log('new:' + newComment);
+    const data = await newComment.save();
+    console.log(data);
     return {
       msg: 'Comment successfully',
       statusCode: 200,
+      data: data,
     };
   } catch (error) {
     return {
@@ -62,15 +96,28 @@ const ReplyComment = async (token, body) => {
   try {
     const comment = await Comment.findOne({ _id: _id });
     console.log(comment._id);
-
-    var reply = comment.Reply;
-    //console.log('reply:'+reply);
+    var replys = comment.Reply;
+    const base = '0123456789';
+    let flag = true;
+    var randomId = '';
+    while (flag == true) {
+      //kiểm tra trùng
+      var randomId = getRandomString(7, base);
+      var reply = replys.find((e) => {
+        return e._id === randomId;
+      });
+      if (!reply) {
+        flag = false;
+      }
+    }
+    console.log('replys:' + replys);
     var content = {};
+    content._id = randomId;
     content.Email = Email;
     content.Content = Content;
     content.CreateAt = Date.now();
-    reply.push(content);
-    comment.Reply = reply;
+    replys.push(content);
+    comment.Reply = replys;
     await comment.save();
     return {
       msg: 'Reply comment successfully',
@@ -83,4 +130,5 @@ const ReplyComment = async (token, body) => {
     };
   }
 };
+
 module.exports = { PostComment, ReplyComment };
