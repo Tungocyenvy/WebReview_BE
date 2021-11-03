@@ -6,6 +6,7 @@ const CommentSchema = new schema({
   Email: { type: String, require: true },
   Content: { type: String, require: true },
   PostId: { type: String, require: true },
+  CreateAt: { type: Date },
   Reply: [
     {
       _id: { type: String },
@@ -14,7 +15,6 @@ const CommentSchema = new schema({
       CreateAt: { type: Date },
     },
   ],
-  CreateAt: { type: Date },
 });
 
 const Comment = mongoose.model('Comment', CommentSchema);

@@ -180,7 +180,7 @@ const ChangePasswordService = async (IDToken, body) => {
 };
 
 //get Infor User
-const getUserDataSerice = async (body) => {
+const getUserDataService = async (body) => {
   let { Email } = body;
   console.log(Email);
   try {
@@ -230,6 +230,6 @@ module.exports = {
   SigninService,
   ForgetPasswordService,
   ChangePasswordService,
-  getUserDataSerice,
+  getUserDataService,
   UpdateUserService,
 };

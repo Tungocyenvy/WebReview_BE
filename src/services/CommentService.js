@@ -47,11 +47,11 @@ const PostComment = async (token, body) => {
   try {
     const base = '0123456789';
     let flag = true;
-    var randomId = '';
+    let randomId;
     while (flag == true) {
       //kiểm tra trùng
       console.log(1);
-      var randomId = getRandomString(6, base);
+      randomId = getRandomString(6, base);
       const cmt = await Comment.findOne({ _id: randomId });
       if (!cmt) {
         console.log(2);
@@ -62,26 +62,32 @@ const PostComment = async (token, body) => {
     // console.log(Email);
     // console.log(Content);
     // console.log(PostId);
+
     const newComment = new Comment({
       _id: randomId,
       Email: Email,
       Content,
       PostId,
-      Reply: '',
       CreateAt: Date.now(),
     });
-    console.log(typeof CreateAt);
-    console.log('new:' + newComment);
-    const data = await newComment.save();
-    console.log(data);
-    return {
-      msg: 'Comment successfully',
-      statusCode: 200,
-      data: data,
-    };
+    console.log('newComment', newComment);
+    const resSave = await newComment.save();
+    console.log(resSave);
+    if (resSave) {
+      return {
+        msg: 'Comment Thành công!',
+        statusCode: 200,
+        data: resSave,
+      };
+    } else {
+      return {
+        msg: 'Lỗi! Không thể comment',
+        statusCode: 300,
+      };
+    }
   } catch (error) {
     return {
-      msg: 'Comment failed',
+      msg: 'Lỗi trong quá trình comment',
       statusCode: 300,
     };
   }

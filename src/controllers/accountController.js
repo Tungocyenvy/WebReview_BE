@@ -57,7 +57,7 @@ const changePassword = async (req, res, next) => {
 
 const getDataUSer = async (req, res, next) => {
   const token = req.value.body.token.data;
-  const resService = await accountService.getUserDataSerice({ Email: token });
+  const resService = await accountService.getUserDataService({ Email: token });
   if (resService.statusCode === 200) {
     return controller.sendSuccess(
       res,
