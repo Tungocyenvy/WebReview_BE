@@ -12,4 +12,7 @@ router.get('/review/getPost', postController.getReview);
 //Experience
 router.get('/experience/getPost', postController.getExperience);
 
+//forum
+router.get('/forum/getPost', postController.getForum);
+
 module.exports = router;

@@ -81,11 +81,11 @@ const getExperience = async (body) => {
     console.log('all:' + experience);
 
     //Lấy ra 5 bài kinh nghiệm mới nhất
-    let toprexp = Array.from(experience);
-    toprexp.reverse();
-    toprexp = toprexp.slice(0, 6);
+    let topexp = Array.from(experience);
+    topexp.reverse();
+    topexp = topexp.slice(0, 6);
 
-    console.log('Index:' + toprexp);
+    console.log('Index:' + topexp);
 
     if (!experience) {
       return {
@@ -96,7 +96,59 @@ const getExperience = async (body) => {
       return {
         msg: 'Lấy tất cả bài chia sẻ kinh nghiệm thành công!',
         statusCode: 200,
-        data: { experience, toprexp },
+        data: { experience, topexp },
+      };
+    }
+  } catch {
+    return {
+      msg: 'Xảy ra lỗi trong quá trình lấy thông tin',
+      statusCode: 300,
+    };
+  }
+};
+
+//FORUM
+// get Post Forum
+const getForum = async (body) => {
+  try {
+    const Id = 'Forum';
+    const post = await Post.find({});
+    const data = post[0].Group;
+    let forum;
+    for (const i in data) {
+      if (data[i].Id == Id) {
+        forum = data[i];
+        break;
+      }
+    }
+
+    forum = forum.Post;
+
+    //Lấy bài đăng trong forum đã duyệt
+    for (const k in forum) {
+      if (!forum[k].Status) {
+        forum.remove(forum[k]);
+      }
+    }
+    console.log('all:' + forum);
+
+    //Lấy ra 5 bài trong forum mới nhất
+    let topfrm = Array.from(forum);
+    topfrm.reverse();
+    topfrm = topfrm.slice(0, 6);
+
+    console.log('Index:' + topfrm);
+
+    if (!forum) {
+      return {
+        msg: 'Không có bài viết nào trong forum!',
+        statusCode: 300,
+      };
+    } else {
+      return {
+        msg: 'Lấy tất cả bài viết trong forum thành công!',
+        statusCode: 200,
+        data: { forum, topfrm },
       };
     }
   } catch {
@@ -110,4 +162,5 @@ const getExperience = async (body) => {
 module.exports = {
   getReview,
   getExperience,
+  getForum,
 };

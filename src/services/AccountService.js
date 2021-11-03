@@ -30,7 +30,7 @@ const SignupService = async (body) => {
           DOB,
           Address,
           IsAdmin: false,
-          avatar: '',
+          Avatar: '',
           Token: token,
         });
         console.log('newAccount', newAccount);
