@@ -15,28 +15,36 @@ const getRandomString = (length, base) => {
   return 'CMT' + result;
 };
 //get comment
-// const GetComment = async () => {
-//   try {
-//     const comment = await Comment.find({});
-//     if (!comment) {
-//       return {
-//         msg: 'Không có bình luận nào!',
-//         statusCode: 300,
-//       };
-//     } else {
-//       return {
-//         msg: 'Lấy tất cả bình luận thành công!',
-//         statusCode: 200,
-//         data: { comment },
-//       };
-//     }
-//   } catch (error) {
-//     return {
-//       msg: 'Xảy ra lỗi trong quá trình lấy thông tin',
-//       statusCode: 300,
-//     };
-//   }
-// }
+const GetComment = async () => {
+  try {
+    const comment = await Comment.find({});
+    // dem so luong cmt
+    let countCmt = comment.length;
+    for (var i = 0; i < comment.length; i++) {
+      const replys = comment[i].Reply;
+      countCmt += replys.length;
+    }
+    console.log(countCmt);
+    //
+    if (!comment) {
+      return {
+        msg: 'Không có bình luận nào!',
+        statusCode: 300,
+      };
+    } else {
+      return {
+        msg: 'Lấy tất cả bình luận thành công!',
+        statusCode: 200,
+        data: { comment },
+      };
+    }
+  } catch (error) {
+    return {
+      msg: 'Xảy ra lỗi trong quá trình lấy thông tin',
+      statusCode: 300,
+    };
+  }
+};
 
 //post comment
 const PostComment = async (token, body) => {
@@ -58,10 +66,6 @@ const PostComment = async (token, body) => {
         flag = false;
       }
     }
-    // console.log(randomId);
-    // console.log(Email);
-    // console.log(Content);
-    // console.log(PostId);
 
     const newComment = new Comment({
       _id: randomId,
@@ -137,4 +141,154 @@ const ReplyComment = async (token, body) => {
   }
 };
 
-module.exports = { PostComment, ReplyComment };
+const UpdateComment = async (token, body) => {
+  let { Email } = token;
+  console.log('Email comment: ');
+  console.log(Email);
+  let { Content, _id } = body;
+  console.log(_id);
+  try {
+    const comment = await Comment.findOne({ _id: _id });
+    if (comment.Email === Email) {
+      comment._id = _id;
+      comment.Email = Email;
+      comment.Content = Content;
+      comment.PostId = PostId;
+      comment.CreateAt = Date.now();
+      const resSave = await comment.save();
+      console.log(resSave);
+      if (resSave) {
+        return {
+          msg: 'Update comment Thành công!',
+          statusCode: 200,
+          data: resSave,
+        };
+      } else {
+        return {
+          msg: 'Lỗi! Không thể update',
+          statusCode: 300,
+        };
+      }
+    } else {
+      return {
+        msg: 'Email không trùng!',
+        statusCode: 300,
+      };
+    }
+  } catch (error) {
+    return {
+      msg: 'Lỗi trong quá trình update comment',
+      statusCode: 300,
+    };
+  }
+};
+
+const UpdateReply = async (token, body) => {
+  let { Email } = token;
+  console.log('Email comment: ');
+  console.log(Email);
+  let { Content, _id, idComment } = body;
+  //console.log(_id);
+  try {
+    const comment = await Comment.findOne({ _id: idComment });
+    var replys = comment.Reply;
+    var index = replys.findIndex((e) => {
+      return e._id === _id;
+    });
+    const content = {};
+    content._id = _id;
+    content.Email = Email;
+    content.Content = Content;
+    content.CreateAt = Date.now();
+    console.log(content);
+    replys.splice(index, 1, content);
+    consolo.log(replys);
+    comment.Reply = replys;
+    await comment.save();
+    return {
+      msg: 'Update reply successfully',
+      statusCode: 200,
+      data: { comment },
+    };
+  } catch (error) {
+    return {
+      msg: 'Lỗi trong quá trình update comment',
+      statusCode: 300,
+    };
+  }
+};
+
+const DeleteComment = async (token, body) => {
+  let { Email } = token;
+  console.log('Email comment: ');
+  console.log(Email);
+  let { _id } = body;
+  try {
+    const dataComment = { _id: _id, Email: Email };
+    const comment = await Comment.findOneAndDelete(dataComment);
+    if (!comment) {
+      return {
+        msg: 'Delete failed',
+        statusCode: 300,
+      };
+    }
+    return {
+      msg: 'Delete comment successfully',
+      statusCode: 200,
+    };
+  } catch (error) {
+    return {
+      msg: 'Delete failed',
+      statusCode: 300,
+    };
+  }
+};
+
+const DeleteReply = async (token, body) => {
+  let { Email } = token;
+  console.log('Email comment: ');
+  console.log(Email);
+  let { _id, idComment } = body;
+  try {
+    const comment = await Comment.findOne({ _id: idComment });
+    console.log(comment);
+    if (comment) {
+      const replys = comment.Reply;
+      console.log(replys);
+      if (replys.length > 0) {
+        const new_replys = replys.filter((e) => {
+          return e._id !== _id;
+        });
+        comment.Reply = new_replys;
+        await comment.save();
+        return {
+          msg: 'Delete reply successfully',
+          statusCode: 200,
+        };
+      }
+      return {
+        msg: 'Không có reply nào',
+        statusCode: 300,
+      };
+    }
+    return {
+      msg: 'Không có comment nào',
+      statusCode: 300,
+    };
+  } catch (error) {
+    return {
+      msg: 'Delete failed',
+      statusCode: 300,
+    };
+  }
+};
+
+module.exports = {
+  PostComment,
+  ReplyComment,
+  GetComment,
+  UpdateComment,
+  UpdateReply,
+  DeleteComment,
+  DeleteReply,
+};

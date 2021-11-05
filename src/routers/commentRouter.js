@@ -12,6 +12,10 @@ router.post(
   commentController.postComment,
 );
 router.post('/reply', jwt.verify, commentController.replyComment);
-//router.get('/',commentController.getComment);
+router.get('/', commentController.getComment);
+router.post('/update', jwt.verify, commentController.updateComment);
+router.post('/updateReply', jwt.verify, commentController.updateReply);
+router.get('/delete', jwt.verify, commentController.deleteComment);
+router.get('/deleteReply', jwt.verify, commentController.deleteReply);
 
 module.exports = router;
