@@ -148,33 +148,23 @@ const UpdateComment = async (token, body) => {
   let { Content, _id } = body;
   console.log(_id);
   try {
-    const comment = await Comment.findOne({ _id: _id });
-    if (comment.Email === Email) {
-      comment._id = _id;
-      comment.Email = Email;
-      comment.Content = Content;
-      comment.PostId = PostId;
-      comment.CreateAt = Date.now();
-      const resSave = await comment.save();
-      console.log(resSave);
-      if (resSave) {
-        return {
-          msg: 'Update comment Thành công!',
-          statusCode: 200,
-          data: resSave,
-        };
-      } else {
-        return {
-          msg: 'Lỗi! Không thể update',
-          statusCode: 300,
-        };
-      }
-    } else {
+    const comment = await Comment.findOne({ _id: _id, Email: Email });
+    console.log(comment);
+    comment.Content = Content;
+    comment.CreateAt = Date.now();
+    const resSave = await comment.save();
+    console.log(resSave);
+    if (resSave) {
       return {
-        msg: 'Email không trùng!',
-        statusCode: 300,
+        msg: 'Update comment Thành công!',
+        statusCode: 200,
+        data: resSave,
       };
     }
+    return {
+      msg: 'Lỗi! Không thể update',
+      statusCode: 300,
+    };
   } catch (error) {
     return {
       msg: 'Lỗi trong quá trình update comment',
