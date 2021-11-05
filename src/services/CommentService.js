@@ -192,17 +192,14 @@ const UpdateReply = async (token, body) => {
   try {
     const comment = await Comment.findOne({ _id: idComment });
     var replys = comment.Reply;
-    var index = replys.findIndex((e) => {
-      return e._id === _id;
-    });
-    const content = {};
-    content._id = _id;
-    content.Email = Email;
-    content.Content = Content;
-    content.CreateAt = Date.now();
-    console.log(content);
-    replys.splice(index, 1, content);
-    consolo.log(replys);
+
+    for (var i in replys) {
+      if (replys[i]._id === _id) {
+        replys[i].Content = Content;
+        replys[i].CreateAt = Date.now();
+      }
+    }
+    console.log(replys);
     comment.Reply = replys;
     await comment.save();
     return {
