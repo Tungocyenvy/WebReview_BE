@@ -4,15 +4,27 @@ const jwt = require('../services/jwtService');
 const postController = require('../controllers/postController');
 
 //Review
-router.get('/review/getPost', postController.getReview);
-router.get('/review/getPost/:CategoryId', postController.getReviewbyCategory);
+router.get('/review/getPost', jwt.verify, postController.getReview);
+router.get(
+  '/review/getPost/:CategoryId',
+  jwt.verify,
+  postController.getReviewbyCategory,
+);
 
 //Experience
-router.get('/experience/getPost', postController.getExperience);
-router.get('/experience/getPost/:CategoryId', postController.getExpbyCategory);
+router.get('/experience/getPost', jwt.verify, postController.getExperience);
+router.get(
+  '/experience/getPost/:CategoryId',
+  jwt.verify,
+  postController.getExpbyCategory,
+);
 
 //forum
-router.get('/forum/getPost', postController.getForum);
-router.get('/forum/getPost/:CategoryId', postController.getForumbyCategory);
+router.get('/forum/getPost', jwt.verify, postController.getForum);
+router.get(
+  '/forum/getPost/:CategoryId',
+  jwt.verify,
+  postController.getForumbyCategory,
+);
 
 module.exports = router;

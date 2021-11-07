@@ -1,18 +1,16 @@
 const Post = require('../models/postModel');
+const { getRating } = require('../services/RatingService');
 
 //REVIEW
 // get Post review
 const getReview = async (body) => {
+  let { Email } = body;
+  console.log('body:' + body);
+  console.log('Email:' + Email);
   try {
-    const Id = 'Review';
-    const post = await Post.find({});
-    const data = post[0].Group;
-    let review = data.find((x) => x.Id === Id);
-    review = review.Post;
-
     //Lấy bài viết đã duyệt
-    review = review.filter((x) => x.Status === true);
-    console.log('review:' + review);
+    const Id = 'Review';
+    const review = (await getPost(Id, Email)).data;
 
     //lấy ra 15 bài review mới nhất
     let topreview = Array.from(review);
@@ -42,15 +40,15 @@ const getReview = async (body) => {
 
 //get post review by CategoryId
 const getReviewbyCategory = async (body) => {
-  let { CategoryId } = body;
+  let { Email, CategoryId } = body;
   console.log('Categoryid:' + CategoryId);
   try {
     //Lấy tất cả bài review đã được duyệt
-    let post = await getReview();
+    let post = await getReview({ Email });
     post = post.data.review;
 
     //Tìm và lấy theo loại
-    let result = post.filter((x) => x.CategoryId === CategoryId);
+    let result = post.filter((x) => x.dataPost.CategoryId === CategoryId);
     console.log('get by category' + result);
 
     if (result.length <= 0) {
@@ -76,16 +74,11 @@ const getReviewbyCategory = async (body) => {
 //EXPERIENCE
 // get Post Experience
 const getExperience = async (body) => {
+  let { Email } = body;
   try {
-    const Id = 'Experience';
-    const post = await Post.find({});
-    const data = post[0].Group;
-    let experience = data.find((x) => x.Id === Id);
-    experience = experience.Post;
-
     //Lấy bài chia sẻ đã duyệt
-    experience = experience.filter((x) => x.Status === true);
-    console.log('all:' + experience);
+    const Id = 'Experience';
+    const experience = (await getPost(Id, Email)).data;
 
     //Lấy ra 5 bài kinh nghiệm mới nhất
     let topexp = Array.from(experience);
@@ -116,15 +109,15 @@ const getExperience = async (body) => {
 
 //get post Experience by CategoryId
 const getEXPbyCategory = async (body) => {
-  let { CategoryId } = body;
+  let { Email, CategoryId } = body;
   console.log('Categoryid:' + CategoryId);
   try {
     //Lấy tất cả bài Experience đã được duyệt
-    let post = await getExperience();
+    let post = await getExperience({ Email });
     post = post.data.experience;
 
     //Tìm và lấy theo loại
-    let result = post.filter((x) => x.CategoryId === CategoryId);
+    let result = post.filter((x) => x.dataPost.CategoryId === CategoryId);
     console.log('get by category' + result);
 
     if (result.length <= 0) {
@@ -150,16 +143,11 @@ const getEXPbyCategory = async (body) => {
 //FORUM
 // get Post Forum
 const getForum = async (body) => {
+  let { Email } = body;
   try {
+    //Lấy bài đăng trong forum đã duyệt
     const Id = 'Forum';
-    const post = await Post.find({});
-    const data = post[0].Group;
-    let forum = data.find((x) => x.Id === Id);
-    forum = forum.Post;
-
-    //Lấy bài chia sẻ đã duyệt
-    forum = forum.filter((x) => x.Status === true);
-    console.log('all:' + forum);
+    const forum = (await getPost(Id, Email)).data;
 
     //Lấy ra 5 bài trong forum mới nhất
     let topfrm = Array.from(forum);
@@ -190,15 +178,15 @@ const getForum = async (body) => {
 
 //get post forum by CategoryId
 const getForumbyCategory = async (body) => {
-  let { CategoryId } = body;
+  let { Email, CategoryId } = body;
   console.log('Categoryid:' + CategoryId);
   try {
     //Lấy tất cả bài forum đã được duyệt
-    let post = await getForum();
+    let post = await getForum({ Email });
     post = post.data.forum;
 
     //Tìm và lấy theo loại
-    let result = post.filter((x) => x.CategoryId === CategoryId);
+    let result = post.filter((x) => x.dataPost.CategoryId === CategoryId);
     console.log('get by category' + result);
 
     if (result.length <= 0) {
@@ -219,6 +207,49 @@ const getForumbyCategory = async (body) => {
       statusCode: 300,
     };
   }
+};
+
+//Lấy rate cho bài viết {Group lọc cho các trang Review,Exp, Forum}
+const getRates = async (Group, Email) => {
+  for (const i in Group) {
+    const PostId = Group[i].Id;
+    const getRate = (await getRating(PostId, Email)).data;
+
+    let Rating = getRate.rating;
+    let RatingbyAcc = getRate.byAccount;
+
+    if (!Rating) {
+      Rating = 0;
+      RatingbyAcc = 0;
+    }
+
+    const dataPost = Group[i];
+    let temp = { dataPost, Rating, RatingbyAcc };
+    Group[i] = temp;
+
+    console.log('Group[i]');
+    console.log(Group[i]);
+  }
+  return { data: Group };
+};
+
+//Lấy tất cả các bài viết dc duyệt {Id lọc cho các trang Review,Exp, Forum}
+const getPost = async (Id, Email) => {
+  //const Id = 'Review';
+  const post = await Post.find({});
+  const data = post[0].Group;
+
+  let group = data.find((x) => x.Id === Id);
+  group = group.Post;
+
+  //Lấy bài viết đã duyệt
+  group = group.filter((x) => x.Status === true);
+  //console.log('review:' + review);
+
+  //Lấy rating của bài viết và rate của riêng account
+  group = (await getRates(group, Email)).data;
+
+  return { data: group };
 };
 
 module.exports = {

@@ -3,7 +3,8 @@ const postService = require('../services/PostService');
 
 //REVIEW
 const getReview = async (req, res, next) => {
-  const resService = await postService.getReview();
+  const token = req.value.body.token.data;
+  const resService = await postService.getReview({ Email: token });
   if (resService.statusCode === 200) {
     return controller.sendSuccess(
       res,
@@ -15,8 +16,12 @@ const getReview = async (req, res, next) => {
   return controller.sendSuccess(res, {}, resService.statusCode, resService.msg);
 };
 const getReviewbyCategory = async (req, res, next) => {
+  const token = req.value.body.token.data;
   const id = req.params.CategoryId;
-  const resService = await postService.getReviewbyCategory({ CategoryId: id });
+  const resService = await postService.getReviewbyCategory({
+    Email: token,
+    CategoryId: id,
+  });
   if (resService.statusCode === 200) {
     return controller.sendSuccess(
       res,
@@ -30,7 +35,8 @@ const getReviewbyCategory = async (req, res, next) => {
 
 //EXPERIENCE
 const getExperience = async (req, res, next) => {
-  const resService = await postService.getExperience();
+  const token = req.value.body.token.data;
+  const resService = await postService.getExperience({ Email: token });
   if (resService.statusCode === 200) {
     return controller.sendSuccess(
       res,
@@ -43,8 +49,12 @@ const getExperience = async (req, res, next) => {
 };
 
 const getExpbyCategory = async (req, res, next) => {
+  const token = req.value.body.token.data;
   const id = req.params.CategoryId;
-  const resService = await postService.getEXPbyCategory({ CategoryId: id });
+  const resService = await postService.getEXPbyCategory({
+    Email: token,
+    CategoryId: id,
+  });
   if (resService.statusCode === 200) {
     return controller.sendSuccess(
       res,
@@ -58,7 +68,8 @@ const getExpbyCategory = async (req, res, next) => {
 
 //FORUM
 const getForum = async (req, res, next) => {
-  const resService = await postService.getForum();
+  const token = req.value.body.token.data;
+  const resService = await postService.getForum({ Email: token });
   if (resService.statusCode === 200) {
     return controller.sendSuccess(
       res,
@@ -71,8 +82,12 @@ const getForum = async (req, res, next) => {
 };
 
 const getForumbyCategory = async (req, res, next) => {
+  const token = req.value.body.token.data;
   const id = req.params.CategoryId;
-  const resService = await postService.getForumbyCategory({ CategoryId: id });
+  const resService = await postService.getForumbyCategory({
+    Email: token,
+    CategoryId: id,
+  });
   if (resService.statusCode === 200) {
     return controller.sendSuccess(
       res,
