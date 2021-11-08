@@ -14,4 +14,6 @@ router.get(
   postController.getPostbyCategory,
 );
 
+//search
+router.get('/searchPost', postController.searchPost);
 module.exports = router;

@@ -150,8 +150,46 @@ const getPost = async (body) => {
   }
 };
 
+const searchPost = async (req) => {
+  const searchField = req.query.Title;
+  console.log(searchField);
+  try {
+    const post = await Post.find({});
+    const data = post[0].Group;
+    let search = {};
+    let n = 0;
+    for (const i in data) {
+      let temp = data[i].Post;
+      temp = temp.filter((x) => x.Status === true);
+      let result = temp.filter((x) => x.Title.match(searchField));
+      //console.log(result);
+      if (result.length > 0) {
+        search[n] = result;
+        n++;
+      }
+    }
+    //console.log(search);
+    if (Object.values(search).length === 0) {
+      return {
+        msg: 'Không tìm thấy kết quả nào',
+        statusCode: 300,
+      };
+    }
+    return {
+      msg: 'Tìm kiếm thành công',
+      statusCode: 200,
+      data: { search },
+    };
+  } catch {
+    return {
+      msg: 'Xảy ra lỗi trong quá trình lấy thông tin',
+      statusCode: 300,
+    };
+  }
+};
 module.exports = {
   getPost,
   getPostbyGroupId,
   getPostbyCategory,
+  searchPost,
 };

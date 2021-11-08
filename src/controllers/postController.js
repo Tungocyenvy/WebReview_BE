@@ -58,8 +58,22 @@ const getPost = async (req, res, next) => {
   return controller.sendSuccess(res, {}, resService.statusCode, resService.msg);
 };
 
+const searchPost = async (req, res, next) => {
+  const resService = await postService.searchPost(req);
+  if (resService.statusCode === 200) {
+    return controller.sendSuccess(
+      res,
+      resService.data,
+      resService.statusCode,
+      resService.msg,
+    );
+  }
+  return controller.sendSuccess(res, {}, resService.statusCode, resService.msg);
+};
+
 module.exports = {
   getPostbyGroupId,
   getPost,
   getPostbyCategory,
+  searchPost,
 };
