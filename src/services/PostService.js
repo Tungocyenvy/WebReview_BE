@@ -1,8 +1,9 @@
 const Post = require('../models/postModel');
+const Account = require('../models/accountModel');
 const { getRating } = require('../services/RatingService');
 
 //Lấy rate cho bài viết {Group lọc cho các trang Review,Exp, Forum}
-const getRates = async (Group, Email) => {
+const getRates = async (Group, Email, GroupId) => {
   for (const i in Group) {
     const PostId = Group[i].Id;
     const getRate = (await getRating(PostId, Email)).data;
@@ -17,9 +18,20 @@ const getRates = async (Group, Email) => {
       Rating = 0;
       RatingbyAcc = 0;
     }
-
     const dataPost = Group[i];
-    let temp = { dataPost, Rating, RatingbyAcc };
+    let temp;
+    //lấy avatar cho trang forum
+    if (GroupId === 'Forum') {
+      console.log('FORUM');
+      //Lấy avatar
+      const email = Group[i].Email;
+      const account = await Account.findOne({ Email: email });
+      let avatar = account.Avatar;
+      temp = { dataPost, avatar, Rating, RatingbyAcc };
+    } else {
+      temp = { dataPost, Rating, RatingbyAcc };
+    }
+
     Group[i] = temp;
 
     console.log('Group[i]');
@@ -41,7 +53,7 @@ const getPostbyGroupId = async (body) => {
     group = group.Post;
     //Lấy bài viết đã duyệt
     group = group.filter((x) => x.Status === true);
-    //console.log('review:' + review);
+
     if (group.length <= 0) {
       return {
         msg: 'Không có bài viết nào!',
@@ -49,7 +61,7 @@ const getPostbyGroupId = async (body) => {
       };
     } else {
       //Lấy rating của bài viết và rate của riêng account
-      group = (await getRates(group, Email)).data;
+      group = (await getRates(group, Email, GroupId)).data;
 
       if (group == -1) {
         return {
