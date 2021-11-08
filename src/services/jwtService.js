@@ -23,40 +23,46 @@ async function verify(req, res, next) {
           authorization
           content
       */
+    let token = '';
 
-    if (!header) {
-      res.json({
-        data: {
-          tokenVerificationData: {
-            access: false,
-            message: 'No token provided',
-          },
-        },
-      });
-      return;
-    }
-    const token = header.split(' ')[1];
-    console.log('tokenService token : ' + token);
-    jwt.verify(token, serectKey, (err, decodedFromToken) => {
-      if (err) {
-        console.log('err');
-        res.json({
-          data: {
-            tokenVerificationData: {
-              access: false,
-              message: 'Lỗi khi xác thực token',
+    // if (!header) {
+    //   res.json({
+    //     data: {
+    //       tokenVerificationData: {
+    //         access: false,
+    //         message: 'No token provided',
+    //       },
+    //     },
+    //   });
+    //   return;
+    // }
+    if (header) {
+      token = header.split(' ')[1];
+      console.log('tokenService token : ' + token);
+      jwt.verify(token, serectKey, (err, decodedFromToken) => {
+        if (err) {
+          console.log('err');
+          res.json({
+            data: {
+              tokenVerificationData: {
+                access: false,
+                message: 'Lỗi khi xác thực token',
+              },
             },
-          },
-        });
-        return;
-      } else {
-        const idUser = decodedFromToken.data;
-        if (!req.value) req.value = {};
-        if (!req.value.body) req.value.body = {};
-        req.value = { body: { token: decodedFromToken } };
-        next();
-      }
-    });
+          });
+          return;
+        } else {
+          const idUser = decodedFromToken.data;
+          if (!req.value) req.value = {};
+          if (!req.value.body) req.value.body = {};
+          req.value = { body: { token: decodedFromToken } };
+          next();
+        }
+      });
+    } else {
+      req.value = { body: { token } };
+      next();
+    }
   } catch (err) {
     console.log(err);
     return res.json({
