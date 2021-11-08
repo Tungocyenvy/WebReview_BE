@@ -16,11 +16,9 @@ const getRating = async (PostId, Email) => {
       data: { rating, byAccount },
     };
   } catch {
-    rating = -1;
-    byAccount = -1;
+    let result = -1;
     return {
-      data: rating,
-      byAccount,
+      data: result,
     };
   }
 };

@@ -2,13 +2,7 @@ const express = require('express');
 const router = express.Router();
 const categoryController = require('../controllers/categoryController');
 
-//Review
-router.get('/review/getCategory', categoryController.getReview);
-
-//Experience
-router.get('/experience/getCategory', categoryController.getExperience);
-
-//forum
-router.get('/forum/getCategory', categoryController.getForum);
+//GroupId={RV, EXP, Forum}
+router.get('/getCategory/:GroupId', categoryController.getCategory);
 
 module.exports = router;

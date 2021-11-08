@@ -1,37 +1,12 @@
 const controller = require('./index');
 const categoryService = require('../services/CategoryService');
 
-//REVIEW
-const getReview = async (req, res, next) => {
-  const resService = await categoryService.getReview();
-  if (resService.statusCode === 200) {
-    return controller.sendSuccess(
-      res,
-      resService.data,
-      resService.statusCode,
-      resService.msg,
-    );
-  }
-  return controller.sendSuccess(res, {}, resService.statusCode, resService.msg);
-};
-
-//EXPERIENCE
-const getExperience = async (req, res, next) => {
-  const resService = await categoryService.getExperience();
-  if (resService.statusCode === 200) {
-    return controller.sendSuccess(
-      res,
-      resService.data,
-      resService.statusCode,
-      resService.msg,
-    );
-  }
-  return controller.sendSuccess(res, {}, resService.statusCode, resService.msg);
-};
-
-//FORUM
-const getForum = async (req, res, next) => {
-  const resService = await categoryService.getForum();
+//Lấy bài viết theo loại
+const getCategory = async (req, res, next) => {
+  const id = req.params.GroupId;
+  const resService = await categoryService.getCategory({
+    GroupId: id,
+  });
   if (resService.statusCode === 200) {
     return controller.sendSuccess(
       res,
@@ -44,7 +19,5 @@ const getForum = async (req, res, next) => {
 };
 
 module.exports = {
-  getReview,
-  getExperience,
-  getForum,
+  getCategory,
 };

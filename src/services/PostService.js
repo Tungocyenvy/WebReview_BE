@@ -1,220 +1,15 @@
 const Post = require('../models/postModel');
 const { getRating } = require('../services/RatingService');
 
-//REVIEW
-// get Post review
-const getReview = async (body) => {
-  let { Email } = body;
-  console.log('body:' + body);
-  console.log('Email:' + Email);
-  try {
-    //Lấy bài viết đã duyệt
-    const Id = 'Review';
-    const review = (await getPost(Id, Email)).data;
-
-    //lấy ra 15 bài review mới nhất
-    let topreview = Array.from(review);
-    topreview.reverse();
-    topreview = topreview.slice(0, 16);
-    console.log('Index:' + topreview);
-
-    if (review.length <= 0) {
-      return {
-        msg: 'Không có bài review nào!',
-        statusCode: 300,
-      };
-    } else {
-      return {
-        msg: 'Lấy tất cả bài review thành công!',
-        statusCode: 200,
-        data: { review, topreview },
-      };
-    }
-  } catch {
-    return {
-      msg: 'Xảy ra lỗi trong quá trình lấy thông tin',
-      statusCode: 300,
-    };
-  }
-};
-
-//get post review by CategoryId
-const getReviewbyCategory = async (body) => {
-  let { Email, CategoryId } = body;
-  console.log('Categoryid:' + CategoryId);
-  try {
-    //Lấy tất cả bài review đã được duyệt
-    let post = await getReview({ Email });
-    post = post.data.review;
-
-    //Tìm và lấy theo loại
-    let result = post.filter((x) => x.dataPost.CategoryId === CategoryId);
-    console.log('get by category' + result);
-
-    if (result.length <= 0) {
-      return {
-        msg: 'Không có bài review nào!',
-        statusCode: 300,
-      };
-    } else {
-      return {
-        msg: 'Lấy tất cả bài review thành công!',
-        statusCode: 200,
-        data: result,
-      };
-    }
-  } catch {
-    return {
-      msg: 'Xảy ra lỗi trong quá trình lấy thông tin',
-      statusCode: 300,
-    };
-  }
-};
-
-//EXPERIENCE
-// get Post Experience
-const getExperience = async (body) => {
-  let { Email } = body;
-  try {
-    //Lấy bài chia sẻ đã duyệt
-    const Id = 'Experience';
-    const experience = (await getPost(Id, Email)).data;
-
-    //Lấy ra 5 bài kinh nghiệm mới nhất
-    let topexp = Array.from(experience);
-    topexp.reverse();
-    topexp = topexp.slice(0, 6);
-
-    console.log('Index:' + topexp);
-
-    if (experience.length <= 0) {
-      return {
-        msg: 'Không có bài chia sẻ kinh nghiệm nào!',
-        statusCode: 300,
-      };
-    } else {
-      return {
-        msg: 'Lấy tất cả bài chia sẻ kinh nghiệm thành công!',
-        statusCode: 200,
-        data: { experience, topexp },
-      };
-    }
-  } catch {
-    return {
-      msg: 'Xảy ra lỗi trong quá trình lấy thông tin',
-      statusCode: 300,
-    };
-  }
-};
-
-//get post Experience by CategoryId
-const getEXPbyCategory = async (body) => {
-  let { Email, CategoryId } = body;
-  console.log('Categoryid:' + CategoryId);
-  try {
-    //Lấy tất cả bài Experience đã được duyệt
-    let post = await getExperience({ Email });
-    post = post.data.experience;
-
-    //Tìm và lấy theo loại
-    let result = post.filter((x) => x.dataPost.CategoryId === CategoryId);
-    console.log('get by category' + result);
-
-    if (result.length <= 0) {
-      return {
-        msg: 'Không có bài experience nào!',
-        statusCode: 300,
-      };
-    } else {
-      return {
-        msg: 'Lấy tất cả bài exerience thành công!',
-        statusCode: 200,
-        data: result,
-      };
-    }
-  } catch {
-    return {
-      msg: 'Xảy ra lỗi trong quá trình lấy thông tin',
-      statusCode: 300,
-    };
-  }
-};
-
-//FORUM
-// get Post Forum
-const getForum = async (body) => {
-  let { Email } = body;
-  try {
-    //Lấy bài đăng trong forum đã duyệt
-    const Id = 'Forum';
-    const forum = (await getPost(Id, Email)).data;
-
-    //Lấy ra 5 bài trong forum mới nhất
-    let topfrm = Array.from(forum);
-    topfrm.reverse();
-    topfrm = topfrm.slice(0, 6);
-
-    console.log('Index:' + topfrm);
-
-    if (forum.length <= 0) {
-      return {
-        msg: 'Không có bài viết nào trong forum!',
-        statusCode: 300,
-      };
-    } else {
-      return {
-        msg: 'Lấy tất cả bài viết trong forum thành công!',
-        statusCode: 200,
-        data: { forum, topfrm },
-      };
-    }
-  } catch {
-    return {
-      msg: 'Xảy ra lỗi trong quá trình lấy thông tin',
-      statusCode: 300,
-    };
-  }
-};
-
-//get post forum by CategoryId
-const getForumbyCategory = async (body) => {
-  let { Email, CategoryId } = body;
-  console.log('Categoryid:' + CategoryId);
-  try {
-    //Lấy tất cả bài forum đã được duyệt
-    let post = await getForum({ Email });
-    post = post.data.forum;
-
-    //Tìm và lấy theo loại
-    let result = post.filter((x) => x.dataPost.CategoryId === CategoryId);
-    console.log('get by category' + result);
-
-    if (result.length <= 0) {
-      return {
-        msg: 'Không có bài viết nào trong forum!',
-        statusCode: 300,
-      };
-    } else {
-      return {
-        msg: 'Lấy tất cả bài viết trong forum thành công!',
-        statusCode: 200,
-        data: result,
-      };
-    }
-  } catch {
-    return {
-      msg: 'Xảy ra lỗi trong quá trình lấy thông tin',
-      statusCode: 300,
-    };
-  }
-};
-
 //Lấy rate cho bài viết {Group lọc cho các trang Review,Exp, Forum}
 const getRates = async (Group, Email) => {
   for (const i in Group) {
     const PostId = Group[i].Id;
     const getRate = (await getRating(PostId, Email)).data;
-
+    if (getRate.result == -1) {
+      Group = -1;
+      return { data: Group };
+    }
     let Rating = getRate.rating;
     let RatingbyAcc = getRate.byAccount;
 
@@ -234,29 +29,129 @@ const getRates = async (Group, Email) => {
 };
 
 //Lấy tất cả các bài viết dc duyệt {Id lọc cho các trang Review,Exp, Forum}
-const getPost = async (Id, Email) => {
+
+const getPostbyGroupId = async (body) => {
+  let { Email, GroupId } = body;
   //const Id = 'Review';
-  const post = await Post.find({});
-  const data = post[0].Group;
+  try {
+    const post = await Post.find({});
+    const data = post[0].Group;
 
-  let group = data.find((x) => x.Id === Id);
-  group = group.Post;
+    let group = data.find((x) => x.Id === GroupId);
+    group = group.Post;
+    //Lấy bài viết đã duyệt
+    group = group.filter((x) => x.Status === true);
+    //console.log('review:' + review);
+    if (group.length <= 0) {
+      return {
+        msg: 'Không có bài viết nào!',
+        statusCode: 300,
+      };
+    } else {
+      //Lấy rating của bài viết và rate của riêng account
+      group = (await getRates(group, Email)).data;
 
-  //Lấy bài viết đã duyệt
-  group = group.filter((x) => x.Status === true);
-  //console.log('review:' + review);
+      if (group == -1) {
+        return {
+          msg: 'Lỗi trong quá trình lấy Rating!',
+          statusCode: 300,
+        };
+      } else {
+        return {
+          msg: 'Lấy tất cả bài viết trong ' + GroupId + ' thành công!',
+          statusCode: 200,
+          data: group,
+        };
+      }
+    }
+  } catch {
+    return {
+      msg: 'Xảy ra lỗi trong quá trình lấy thông tin',
+      statusCode: 300,
+    };
+  }
+};
 
-  //Lấy rating của bài viết và rate của riêng account
-  group = (await getRates(group, Email)).data;
+//Lấy tất cả các bài viết dc duyệt theo loại {Id lọc cho các trang Review,Exp, Forum}
+const getPostbyCategory = async (body) => {
+  let { Email, GroupId, CategoryId } = body;
+  try {
+    //Lấy tất cả bài đã được duyệt
+    let post = await getPostbyGroupId({ GroupId, Email });
+    post = post.data;
 
-  return { data: group };
+    //Tìm và lấy theo loại
+    let result = post.filter((x) => x.dataPost.CategoryId === CategoryId);
+    console.log('get by category' + result);
+
+    if (result.length <= 0) {
+      return {
+        msg: 'Không có bài viết nào!',
+        statusCode: 300,
+      };
+    } else {
+      return {
+        msg: 'Lấy tất cả bài viết ' + CategoryId + ' thành công!',
+        statusCode: 200,
+        data: result,
+      };
+    }
+  } catch {
+    return {
+      msg: 'Xảy ra lỗi trong quá trình lấy thông tin',
+      statusCode: 300,
+    };
+  }
+};
+
+//Lấy tất cả bài viết cho trang index
+const getPost = async (body) => {
+  let { Email } = body;
+  //
+  try {
+    //Lấy bài review
+    let GroupId = 'Review';
+    const review = (await getPostbyGroupId({ GroupId, Email })).data;
+    console.log('reciew' + review);
+
+    //lấy bài Eperience
+    GroupId = 'Experience';
+    const exp = (await getPostbyGroupId({ GroupId, Email })).data;
+
+    //Lấy bài forum
+    GroupId = 'Forum';
+    const forum = (await getPostbyGroupId({ GroupId, Email })).data;
+
+    //lấy ra 15 bài review mới nhất
+    let topreview = Array.from(review);
+    topreview.reverse();
+    topreview = topreview.slice(0, 16);
+
+    //Lấy ra 5 bài kinh nghiệm mới nhất
+    let topexp = Array.from(exp);
+    topexp.reverse();
+    topexp = topexp.slice(0, 6);
+
+    //Lấy ra 5 bài trong forum mới nhất
+    let topfrm = Array.from(forum);
+    topfrm.reverse();
+    topfrm = topfrm.slice(0, 6);
+
+    return {
+      msg: 'Lấy tất cả bài viết thành công!',
+      statusCode: 200,
+      data: { topreview, topexp, topfrm },
+    };
+  } catch {
+    return {
+      msg: 'Xảy ra lỗi trong quá trình lấy thông tin',
+      statusCode: 300,
+    };
+  }
 };
 
 module.exports = {
-  getReview,
-  getExperience,
-  getForum,
-  getReviewbyCategory,
-  getEXPbyCategory,
-  getForumbyCategory,
+  getPost,
+  getPostbyGroupId,
+  getPostbyCategory,
 };

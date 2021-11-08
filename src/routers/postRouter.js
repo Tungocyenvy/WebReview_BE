@@ -3,29 +3,15 @@ const router = express.Router();
 const jwt = require('../services/jwtService');
 const postController = require('../controllers/postController');
 
-//Review
-router.get('/review/getPost', jwt.verify, postController.getReview);
-router.get(
-  '/review/getPost/:CategoryId',
-  jwt.verify,
-  postController.getReviewbyCategory,
-);
+router.get('/getPost', jwt.verify, postController.getPost);
 
-//Experience
+//GroupId={Review, Experience, Forum}
+router.get('/getPost/:GroupId', jwt.verify, postController.getPostbyGroupId);
 
-router.get('/experience/getPost', jwt.verify, postController.getExperience);
 router.get(
-  '/experience/getPost/:CategoryId',
+  '/getPost/:GroupId/:CategoryId',
   jwt.verify,
-  postController.getExpbyCategory,
-);
-
-//forum
-router.get('/forum/getPost', jwt.verify, postController.getForum);
-router.get(
-  '/forum/getPost/:CategoryId',
-  jwt.verify,
-  postController.getForumbyCategory,
+  postController.getPostbyCategory,
 );
 
 module.exports = router;
