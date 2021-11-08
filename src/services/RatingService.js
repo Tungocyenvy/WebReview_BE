@@ -7,6 +7,7 @@ const getRating = async (PostId, Email) => {
     let rating = await Rating.findOne({ PostId });
     const data = rating.Rate;
     let byAccount = data.filter((x) => x.Email === Email);
+    byAccount = byAccount[0].Rate;
 
     if (byAccount.length <= 0) {
       byAccount = 0;
