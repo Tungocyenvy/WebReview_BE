@@ -14,15 +14,10 @@ const getRates = async (Group, Email, GroupId) => {
     let Rating = getRate.rating;
     let RatingbyAcc = getRate.byAccount;
 
-    if (!Rating) {
-      Rating = 0;
-      RatingbyAcc = 0;
-    }
     const dataPost = Group[i];
     let temp;
     //lấy avatar cho trang forum
     if (GroupId === 'Forum') {
-      console.log('FORUM');
       //Lấy avatar
       const email = Group[i].Email;
       const account = await Account.findOne({ Email: email });
@@ -34,7 +29,7 @@ const getRates = async (Group, Email, GroupId) => {
 
     Group[i] = temp;
 
-    console.log('Group[i]');
+    console.log('Group[' + i + ']');
     console.log(Group[i]);
   }
   return { data: Group };

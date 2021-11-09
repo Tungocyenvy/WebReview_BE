@@ -4,22 +4,29 @@ const Rating = require('../models/ratingModel');
 // get Post review
 const getRating = async (PostId, Email) => {
   try {
-    let rating = await Rating.findOne({ PostId });
-    const data = rating.Rate;
-    let byAccount = data.filter((x) => x.Email === Email);
-    byAccount = byAccount[0].Rate;
+    let rate = await Rating.findOne({ PostId });
+    let rating = 0;
+    let byAccount = 0;
+    if (rate !== null) {
+      //rating của toàn bài viết
+      const Rate = rate.Rate;
+      const count = Object.values(Rate).length;
+      const AvgRate = Rate.AvgRate;
+      rating = { Rate, AvgRate, count };
 
-    if (byAccount.length <= 0) {
-      byAccount = 0;
+      //lấy theo account
+      const byaccount = Rate.find((x) => x.Email === Email);
+      if (byaccount) {
+        byAccount = byaccount.Rate;
+      }
     }
-
     return {
       data: { rating, byAccount },
     };
   } catch {
     let result = -1;
     return {
-      data: result,
+      data: { result },
     };
   }
 };
