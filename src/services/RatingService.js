@@ -11,7 +11,8 @@ const getRating = async (PostId, Email) => {
       //rating của toàn bài viết
       const Rate = rate.Rate;
       const count = Object.values(Rate).length;
-      const AvgRate = Rate.AvgRate;
+      const AvgRate = rate.AvgRate;
+      console.log('AvgRate' + AvgRate);
       rating = { Rate, AvgRate, count };
 
       //lấy theo account
