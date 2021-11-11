@@ -6,7 +6,7 @@ const RatingSchema = new schema({
   Rate: [
     {
       _id: String,
-      Email: { type: String, require: true },
+      AccountId: { type: String, require: true },
       Rate: { type: Number, require: true },
     },
   ],

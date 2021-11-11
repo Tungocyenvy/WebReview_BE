@@ -14,7 +14,7 @@ const PostSchema = new schema({
           Image: { type: String, require: true },
           Overview: { type: String, require: true },
           Content: { type: String, require: true },
-          Email: { type: String, require: true },
+          AccountId: { type: String, require: true },
           CategoryId: { type: String, require: true },
           Status: { type: Boolean, require: true },
           CreateAt: { type: Date, require: true },

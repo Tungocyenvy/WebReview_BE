@@ -19,6 +19,7 @@ const SchemaAccount = {
     ConfirmPassword: joi.string().min(6).required(),
   }),
   updateuser: joi.object().keys({
+    Email: joi.string().email().required(),
     FullName: joi.string().required(),
     DOB: joi.string(),
     Address: joi.string(),

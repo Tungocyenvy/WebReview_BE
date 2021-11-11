@@ -3,10 +3,10 @@ const Account = require('../models/accountModel');
 const { getRating } = require('../services/RatingService');
 
 //Lấy rate cho bài viết {Group lọc cho các trang Review,Exp, Forum}
-const getRates = async (Group, Email, GroupId) => {
+const getRates = async (Group, AccountId, GroupId) => {
   for (const i in Group) {
     const PostId = Group[i].Id;
-    const getRate = (await getRating(PostId, Email)).data;
+    const getRate = (await getRating(PostId, AccountId)).data;
     if (getRate.result == -1) {
       Group = -1;
       return { data: Group };
@@ -19,8 +19,8 @@ const getRates = async (Group, Email, GroupId) => {
     //lấy avatar cho trang forum
     if (GroupId === 'Forum') {
       //Lấy avatar
-      const email = Group[i].Email;
-      const account = await Account.findOne({ Email: email });
+      const accountId = Group[i].AccountId;
+      const account = await Account.findOne({ _id: accountId });
       let avatar = account.Avatar;
       temp = { dataPost, avatar, Rating, RatingbyAcc };
     } else {
@@ -38,7 +38,7 @@ const getRates = async (Group, Email, GroupId) => {
 //Lấy tất cả các bài viết dc duyệt {Id lọc cho các trang Review,Exp, Forum}
 
 const getPostbyGroupId = async (body) => {
-  let { Email, GroupId } = body;
+  let { AccountId, GroupId } = body;
   //const Id = 'Review';
   try {
     const post = await Post.find({});
@@ -56,7 +56,7 @@ const getPostbyGroupId = async (body) => {
       };
     } else {
       //Lấy rating của bài viết và rate của riêng account
-      group = (await getRates(group, Email, GroupId)).data;
+      group = (await getRates(group, AccountId, GroupId)).data;
 
       if (group == -1) {
         return {
@@ -81,10 +81,10 @@ const getPostbyGroupId = async (body) => {
 
 //Lấy tất cả các bài viết dc duyệt theo loại {Id lọc cho các trang Review,Exp, Forum}
 const getPostbyCategory = async (body) => {
-  let { Email, GroupId, CategoryId } = body;
+  let { AccountId, GroupId, CategoryId } = body;
   try {
     //Lấy tất cả bài đã được duyệt
-    let post = await getPostbyGroupId({ GroupId, Email });
+    let post = await getPostbyGroupId({ AccountId, GroupId });
     post = post.data;
 
     //Tìm và lấy theo loại
@@ -113,21 +113,21 @@ const getPostbyCategory = async (body) => {
 
 //Lấy tất cả bài viết cho trang index
 const getPost = async (body) => {
-  let { Email } = body;
+  let { AccountId } = body;
   //
   try {
     //Lấy bài review
     let GroupId = 'Review';
-    const review = (await getPostbyGroupId({ GroupId, Email })).data;
+    const review = (await getPostbyGroupId({ AccountId, GroupId })).data;
     console.log('reciew' + review);
 
     //lấy bài Eperience
     GroupId = 'Experience';
-    const exp = (await getPostbyGroupId({ GroupId, Email })).data;
+    const exp = (await getPostbyGroupId({ AccountId, GroupId })).data;
 
     //Lấy bài forum
     GroupId = 'Forum';
-    const forum = (await getPostbyGroupId({ GroupId, Email })).data;
+    const forum = (await getPostbyGroupId({ AccountId, GroupId })).data;
 
     //lấy ra 15 bài review mới nhất
     let topreview = Array.from(review);

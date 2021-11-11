@@ -6,8 +6,8 @@ const getPostbyGroupId = async (req, res, next) => {
   const token = req.value.body.token.data;
   const id = req.params.GroupId;
   const resService = await postService.getPostbyGroupId({
+    AccountId: token,
     GroupId: id,
-    Email: token,
   });
   if (resService.statusCode === 200) {
     return controller.sendSuccess(
@@ -27,7 +27,7 @@ const getPostbyCategory = async (req, res, next) => {
   const cate = req.params.CategoryId;
   const resService = await postService.getPostbyCategory({
     GroupId: id,
-    Email: token,
+    AccountId: token,
     CategoryId: cate,
   });
   if (resService.statusCode === 200) {
@@ -45,7 +45,7 @@ const getPostbyCategory = async (req, res, next) => {
 const getPost = async (req, res, next) => {
   const token = req.value.body.token.data;
   const resService = await postService.getPost({
-    Email: token,
+    AccountId: token,
   });
   if (resService.statusCode === 200) {
     return controller.sendSuccess(

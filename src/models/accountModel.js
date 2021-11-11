@@ -11,9 +11,6 @@ const AccountSchema = new schema({
   Address: { type: String, require: true },
   IsAdmin: { type: Boolean, require: true },
   Avatar: { type: String, require: true },
-  Token: {
-    type: String,
-  },
 });
 
 const Account = mongoose.model('Account', AccountSchema);
