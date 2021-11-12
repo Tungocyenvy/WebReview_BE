@@ -18,7 +18,7 @@ const getRating = async (PostId, AccountId) => {
       for (const i in dataRate) {
         const accountId = dataRate[i].AccountId;
         const data = await Account.findOne({ _id: accountId });
-        const Email = data.Email;
+        const FullName = data.FullName;
         const Rate = dataRate[i].Rate;
         console.log('AccountId' + AccountId);
         console.log('accountId' + accountId);
@@ -26,7 +26,7 @@ const getRating = async (PostId, AccountId) => {
           byAccount = Rate;
         }
         let temp = {};
-        temp.Email = Email;
+        temp.FullName = FullName;
         temp.Rate = Rate;
         Rates.push(temp);
       }

@@ -29,9 +29,10 @@ const getRates = async (Group, AccountId, GroupId) => {
       const accountId = Group[i].AccountId;
       const account = await Account.findOne({ _id: accountId });
       let avatar = account.Avatar;
-      temp = { dataPost, avatar, Rating, RatingbyAcc, Comment };
+      let FullName = account.FullName;
+      temp = { FullName, avatar, dataPost, Rating, RatingbyAcc, Comment };
     } else {
-      temp = { dataPost, Rating, RatingbyAcc, Comment };
+      temp = { FullName, dataPost, Rating, RatingbyAcc, Comment };
     }
 
     Group[i] = temp;
