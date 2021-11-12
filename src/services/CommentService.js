@@ -14,10 +14,20 @@ const getRandomString = (length, base) => {
   }
   return 'CMT' + result;
 };
-//get comment
-const GetComment = async () => {
+//get comment theo postId
+const GetComment = async (body) => {
+  let { PostId } = body;
+  console.log(PostId);
   try {
-    const comment = await Comment.find({});
+    let comment = await Comment.find({ PostId: PostId });
+    if (comment.length === 0) {
+      comment = {};
+      return {
+        msg: 'Không có bình luận nào!',
+        statusCode: 300,
+        data: { comment },
+      };
+    }
     // dem so luong cmt
     let countCmt = comment.length;
     for (var i = 0; i < comment.length; i++) {
@@ -25,19 +35,67 @@ const GetComment = async () => {
       countCmt += replys.length;
     }
     console.log(countCmt);
-    //
-    if (!comment) {
-      return {
-        msg: 'Không có bình luận nào!',
-        statusCode: 300,
-      };
-    } else {
-      return {
-        msg: 'Lấy tất cả bình luận thành công!',
-        statusCode: 200,
-        data: { comment },
-      };
+    // lấy avatar ng cmt
+    for (var i in comment) {
+      const data = comment[i];
+      const accountId = data.Email;
+      const account = await Account.findOne({ _id: accountId });
+      let avatar = account.Avatar;
+      let Email = account.Email;
+
+      var replys = data.Reply;
+      console.log(replys);
+      console.log(replys[1]);
+      let result = [];
+      for (var k in replys) {
+        const reply = replys[k];
+        console.log('reply: ' + reply);
+        const accountId1 = reply.Email; //nhớ sưa chữ email lại nha :v
+        const account1 = await Account.findOne({ _id: accountId1 });
+        let avatar1 = account1.Avatar;
+        //let email = account1.Email;
+
+        let objReply = {};
+        objReply._id = reply._id;
+        objReply.Avatar = avatar1;
+        objReply.Email = account1.Email;
+        objReply.Content = reply.Content;
+        objReply.CreateAt = reply.CreateAt;
+
+        // let temp1 = { reply, avatar1 };
+        // console.log(temp1);
+
+        //replys[k] = temp1;
+        result.push(objReply);
+        //console.log(result);
+      }
+      console.log(result);
+      let dataCmt = {};
+      dataCmt._id = data._id;
+      dataCmt.Avatar = avatar;
+      dataCmt.Email = Email;
+      dataCmt.Content = data.Content;
+      dataCmt.CreateAt = data.CreateAt;
+      dataCmt.Reply = result;
+
+      // data.Reply = result;
+      // console.log(data.Reply)
+      // let temp = { data, avatar };
+      comment[i] = dataCmt;
+      console.log(comment[i]);
     }
+
+    // lấy avatar ng reply
+    // for (var l in comment) {
+    //   const data = comment[l];
+    //   console.log(data.Reply);
+
+    // }
+    return {
+      msg: 'Lấy tất cả bình luận thành công!',
+      statusCode: 200,
+      data: { comment },
+    };
   } catch (error) {
     return {
       msg: 'Xảy ra lỗi trong quá trình lấy thông tin',
@@ -107,6 +165,7 @@ const ReplyComment = async (token, body) => {
     const comment = await Comment.findOne({ _id: _id });
     console.log(comment._id);
     var replys = comment.Reply;
+    console.log(replys);
     const base = '0123456789';
     let flag = true;
     var randomId = '';

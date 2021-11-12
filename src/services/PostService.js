@@ -1,6 +1,7 @@
 const Post = require('../models/postModel');
 const Account = require('../models/accountModel');
 const { getRating } = require('../services/RatingService');
+const { GetComment } = require('../services/CommentService');
 
 //Lấy rate cho bài viết {Group lọc cho các trang Review,Exp, Forum}
 const getRates = async (Group, AccountId, GroupId) => {
@@ -15,6 +16,12 @@ const getRates = async (Group, AccountId, GroupId) => {
     let RatingbyAcc = getRate.byAccount;
 
     const dataPost = Group[i];
+
+    //Lấy cmt bài viết
+    const getCmt = (await GetComment({ PostId })).data;
+    console.log(getCmt);
+    const Comment = getCmt.comment;
+
     let temp;
     //lấy avatar cho trang forum
     if (GroupId === 'Forum') {
@@ -22,9 +29,9 @@ const getRates = async (Group, AccountId, GroupId) => {
       const accountId = Group[i].AccountId;
       const account = await Account.findOne({ _id: accountId });
       let avatar = account.Avatar;
-      temp = { dataPost, avatar, Rating, RatingbyAcc };
+      temp = { dataPost, avatar, Rating, RatingbyAcc, Comment };
     } else {
-      temp = { dataPost, Rating, RatingbyAcc };
+      temp = { dataPost, Rating, RatingbyAcc, Comment };
     }
 
     Group[i] = temp;

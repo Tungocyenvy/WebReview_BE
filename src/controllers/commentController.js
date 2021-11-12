@@ -2,7 +2,7 @@ const controller = require('./index');
 const commentService = require('../services/CommentService');
 
 const getComment = async (req, res, next) => {
-  const resService = await commentService.GetComment();
+  const resService = await commentService.GetComment(req.body);
   if (resService.statusCode === 200) {
     return controller.sendSuccess(
       res,
