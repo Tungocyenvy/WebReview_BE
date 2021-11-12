@@ -165,7 +165,7 @@ const getPost = async (body) => {
 };
 
 const searchPost = async (req) => {
-  const searchField = req.query.Title;
+  const searchField = req.query.keyword;
   console.log(searchField);
   try {
     const post = await Post.find({});
