@@ -49,7 +49,7 @@ const GetComment = async (body) => {
       let result = [];
       for (var k in replys) {
         const reply = replys[k];
-        console.log('reply: ' + reply);
+        //console.log('reply: ' + reply);
         const accountId1 = reply.AccountId; //nhớ sưa chữ email lại nha :v
         const account1 = await Account.findOne({ _id: accountId1 });
         let avatar1 = account1.Avatar;
@@ -69,7 +69,7 @@ const GetComment = async (body) => {
         result.push(objReply);
         //console.log(result);
       }
-      console.log(result);
+      //console.log(result);
       let dataCmt = {};
       dataCmt._id = data._id;
       dataCmt.Avatar = avatar;
@@ -82,7 +82,7 @@ const GetComment = async (body) => {
       // console.log(data.Reply)
       // let temp = { data, avatar };
       comment[i] = dataCmt;
-      console.log(comment[i]);
+      //console.log(comment[i]);
     }
 
     // lấy avatar ng reply

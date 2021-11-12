@@ -19,22 +19,25 @@ const getRates = async (Group, AccountId, GroupId) => {
 
     //Lấy cmt bài viết
     const getCmt = (await GetComment({ PostId })).data;
-    console.log(getCmt);
+
     const Comment = getCmt.comment;
+    console.log(Comment);
+
+    //lấy fullname từ id account
+    const accountId = dataPost.AccountId;
+    //console.log(dataPost.AccountId);
+    const account = await Account.findOne({ _id: accountId });
+    const FullName = account.FullName;
 
     let temp;
     //lấy avatar cho trang forum
     if (GroupId === 'Forum') {
       //Lấy avatar
-      const accountId = Group[i].AccountId;
-      const account = await Account.findOne({ _id: accountId });
       let avatar = account.Avatar;
-      let FullName = account.FullName;
       temp = { FullName, avatar, dataPost, Rating, RatingbyAcc, Comment };
     } else {
       temp = { FullName, dataPost, Rating, RatingbyAcc, Comment };
     }
-
     Group[i] = temp;
 
     console.log('Group[' + i + ']');
