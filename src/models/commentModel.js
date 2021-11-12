@@ -3,14 +3,14 @@ const schema = mongoose.Schema;
 
 const CommentSchema = new schema({
   _id: { type: String },
-  Email: { type: String, require: true },
+  AccountId: { type: String, require: true },
   Content: { type: String, require: true },
   PostId: { type: String, require: true },
   CreateAt: { type: Date },
   Reply: [
     {
       _id: { type: String },
-      Email: { type: String, require: true },
+      AccountId: { type: String, require: true },
       Content: { type: String, require: true },
       CreateAt: { type: Date },
     },

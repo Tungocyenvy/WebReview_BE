@@ -38,19 +38,19 @@ const GetComment = async (body) => {
     // lấy avatar ng cmt
     for (var i in comment) {
       const data = comment[i];
-      const accountId = data.Email;
+      const accountId = data.AccountId;
       const account = await Account.findOne({ _id: accountId });
       let avatar = account.Avatar;
-      let Email = account.Email;
+      let FullName = account.FullName;
 
       var replys = data.Reply;
-      console.log(replys);
-      console.log(replys[1]);
+      //console.log(replys);
+      //console.log(replys[1]);
       let result = [];
       for (var k in replys) {
         const reply = replys[k];
         console.log('reply: ' + reply);
-        const accountId1 = reply.Email; //nhớ sưa chữ email lại nha :v
+        const accountId1 = reply.AccountId; //nhớ sưa chữ email lại nha :v
         const account1 = await Account.findOne({ _id: accountId1 });
         let avatar1 = account1.Avatar;
         //let email = account1.Email;
@@ -58,7 +58,7 @@ const GetComment = async (body) => {
         let objReply = {};
         objReply._id = reply._id;
         objReply.Avatar = avatar1;
-        objReply.Email = account1.Email;
+        objReply.FullName = account1.FullName;
         objReply.Content = reply.Content;
         objReply.CreateAt = reply.CreateAt;
 
@@ -73,7 +73,7 @@ const GetComment = async (body) => {
       let dataCmt = {};
       dataCmt._id = data._id;
       dataCmt.Avatar = avatar;
-      dataCmt.Email = Email;
+      dataCmt.FullName = FullName;
       dataCmt.Content = data.Content;
       dataCmt.CreateAt = data.CreateAt;
       dataCmt.Reply = result;
@@ -107,8 +107,8 @@ const GetComment = async (body) => {
 //post comment
 const PostComment = async (token, body) => {
   let { Email } = token;
-  console.log('Email comment: ');
-  console.log(Email);
+  //console.log('Email comment: ');
+  //console.log(Email);
   let { Content, PostId } = body;
   try {
     const base = '0123456789';
@@ -124,10 +124,12 @@ const PostComment = async (token, body) => {
         flag = false;
       }
     }
-
+    const account = await Account.findOne({ Email: Email });
+    const accountId = account._id;
+    //console.log(accountId);
     const newComment = new Comment({
       _id: randomId,
-      Email: Email,
+      AccountId: accountId,
       Content,
       PostId,
       CreateAt: Date.now(),
@@ -137,19 +139,20 @@ const PostComment = async (token, body) => {
     console.log(resSave);
     if (resSave) {
       return {
-        msg: 'Comment Thành công!',
+        msg: 'Bình luận Thành công!',
         statusCode: 200,
         data: resSave,
       };
-    } else {
-      return {
-        msg: 'Lỗi! Không thể comment',
-        statusCode: 300,
-      };
     }
+    resSave = {};
+    return {
+      msg: 'Lỗi! Không thể bình luận',
+      statusCode: 300,
+      data: resSave,
+    };
   } catch (error) {
     return {
-      msg: 'Lỗi trong quá trình comment',
+      msg: 'Lỗi trong quá trình bình luận',
       statusCode: 300,
     };
   }
@@ -158,14 +161,22 @@ const PostComment = async (token, body) => {
 //reply comment
 const ReplyComment = async (token, body) => {
   let { Email } = token;
-  console.log('Email reply: ');
-  console.log(Email);
+  //console.log('Email reply: ');
+  //console.log(Email);
   let { Content, _id } = body;
   try {
     const comment = await Comment.findOne({ _id: _id });
-    console.log(comment._id);
+    if (!comment) {
+      comment = {};
+      return {
+        msg: 'Không tìm thấy bình luận',
+        statusCode: 300,
+        data: comment,
+      };
+    }
+    //console.log(comment._id);
     var replys = comment.Reply;
-    console.log(replys);
+    //console.log(replys);
     const base = '0123456789';
     let flag = true;
     var randomId = '';
@@ -179,22 +190,25 @@ const ReplyComment = async (token, body) => {
         flag = false;
       }
     }
+    const account = await Account.findOne({ Email: Email });
+    const accountId = account._id;
     console.log('replys:' + replys);
     var content = {};
     content._id = randomId;
-    content.Email = Email;
+    content.AccountId = accountId;
     content.Content = Content;
     content.CreateAt = Date.now();
     replys.push(content);
     comment.Reply = replys;
     await comment.save();
     return {
-      msg: 'Reply comment successfully',
+      msg: 'Trả lời bình luận thành công',
       statusCode: 200,
+      data: comment,
     };
   } catch (error) {
     return {
-      msg: 'Reply comment failed',
+      msg: 'Lỗi trong quá trình trả lời bình luận',
       statusCode: 300,
     };
   }
@@ -205,28 +219,40 @@ const UpdateComment = async (token, body) => {
   console.log('Email comment: ');
   console.log(Email);
   let { Content, _id } = body;
-  console.log(_id);
+  //console.log(_id);
   try {
-    const comment = await Comment.findOne({ _id: _id, Email: Email });
-    console.log(comment);
+    const account = await Account.findOne({ Email: Email });
+    const accountId = account._id;
+    const comment = await Comment.findOne({ _id: _id, AccountId: accountId });
+    if (!comment) {
+      comment = {};
+      return {
+        msg: 'Không tìm thấy bình luận',
+        statusCode: 300,
+        data: { comment },
+      };
+    }
+    //console.log(comment);
     comment.Content = Content;
     comment.CreateAt = Date.now();
     const resSave = await comment.save();
     console.log(resSave);
-    if (resSave) {
+    if (!resSave) {
+      resSave = {};
       return {
-        msg: 'Update comment Thành công!',
-        statusCode: 200,
+        msg: 'Lỗi! Không thể chỉnh sửa bình luận',
+        statusCode: 300,
         data: resSave,
       };
     }
     return {
-      msg: 'Lỗi! Không thể update',
-      statusCode: 300,
+      msg: 'Chỉnh sửa bình luận Thành công!',
+      statusCode: 200,
+      data: resSave,
     };
   } catch (error) {
     return {
-      msg: 'Lỗi trong quá trình update comment',
+      msg: 'Lỗi trong quá trình chỉnh sửa bình luận',
       statusCode: 300,
     };
   }
@@ -240,6 +266,14 @@ const UpdateReply = async (token, body) => {
   //console.log(_id);
   try {
     const comment = await Comment.findOne({ _id: idComment });
+    if (!comment) {
+      comment = {};
+      return {
+        msg: 'Không tìm thấy comment',
+        statusCode: 300,
+        data: { comment },
+      };
+    }
     var replys = comment.Reply;
 
     for (var i in replys) {
@@ -252,13 +286,13 @@ const UpdateReply = async (token, body) => {
     comment.Reply = replys;
     await comment.save();
     return {
-      msg: 'Update reply successfully',
+      msg: 'Chỉnh sửa bình luận thành công',
       statusCode: 200,
       data: { comment },
     };
   } catch (error) {
     return {
-      msg: 'Lỗi trong quá trình update comment',
+      msg: 'Lỗi trong quá trình chỉnh sửa bình luận',
       statusCode: 300,
     };
   }
@@ -270,21 +304,25 @@ const DeleteComment = async (token, body) => {
   console.log(Email);
   let { _id } = body;
   try {
-    const dataComment = { _id: _id, Email: Email };
+    const account = await Account.findOne({ Email: Email });
+    const accountId = account._id;
+    const dataComment = { _id: _id, AccountId: accountId };
     const comment = await Comment.findOneAndDelete(dataComment);
     if (!comment) {
+      comment = {};
       return {
-        msg: 'Delete failed',
+        msg: 'Không tìm thấy comment',
         statusCode: 300,
+        data: { comment },
       };
     }
     return {
-      msg: 'Delete comment successfully',
+      msg: 'Xóa bình luận thành công',
       statusCode: 200,
     };
   } catch (error) {
     return {
-      msg: 'Delete failed',
+      msg: 'Lỗi trong quá trình xóa bình luận',
       statusCode: 300,
     };
   }
@@ -298,32 +336,35 @@ const DeleteReply = async (token, body) => {
   try {
     const comment = await Comment.findOne({ _id: idComment });
     console.log(comment);
-    if (comment) {
-      const replys = comment.Reply;
-      console.log(replys);
-      if (replys.length > 0) {
-        const new_replys = replys.filter((e) => {
-          return e._id !== _id;
-        });
-        comment.Reply = new_replys;
-        await comment.save();
-        return {
-          msg: 'Delete reply successfully',
-          statusCode: 200,
-        };
-      }
+    if (!comment) {
+      comment = {};
       return {
-        msg: 'Không có reply nào',
+        msg: 'Không tìm thấy comment',
         statusCode: 300,
+        data: { comment },
+      };
+    }
+    const replys = comment.Reply;
+    console.log(replys);
+    if (replys.length > 0) {
+      const new_replys = replys.filter((e) => {
+        return e._id !== _id;
+      });
+      comment.Reply = new_replys;
+      await comment.save();
+      return {
+        msg: 'Xóa bình luận thành công',
+        statusCode: 200,
+        data: comment,
       };
     }
     return {
-      msg: 'Không có comment nào',
+      msg: 'Không có reply nào',
       statusCode: 300,
     };
   } catch (error) {
     return {
-      msg: 'Delete failed',
+      msg: 'Lỗi trong quá trình xóa bình luận',
       statusCode: 300,
     };
   }
