@@ -21,7 +21,9 @@ const getRates = async (Group, AccountId, GroupId) => {
     const getCmt = (await GetComment({ PostId })).data;
 
     const Comment = getCmt.comment;
-    console.log(Comment);
+    //console.log(Comment);
+    const CommentCount = getCmt.countCmt;
+    //console.log(getCmt.countCmt);
 
     //lấy fullname từ id account
     const accountId = dataPost.AccountId;
@@ -34,9 +36,17 @@ const getRates = async (Group, AccountId, GroupId) => {
     if (GroupId === 'Forum') {
       //Lấy avatar
       let avatar = account.Avatar;
-      temp = { FullName, avatar, dataPost, Rating, RatingbyAcc, Comment };
+      temp = {
+        FullName,
+        avatar,
+        dataPost,
+        Rating,
+        RatingbyAcc,
+        Comment,
+        CommentCount,
+      };
     } else {
-      temp = { FullName, dataPost, Rating, RatingbyAcc, Comment };
+      temp = { FullName, dataPost, Rating, RatingbyAcc, Comment, CommentCount };
     }
     Group[i] = temp;
 
