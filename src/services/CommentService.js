@@ -15,8 +15,8 @@ const getRandomString = (length, base) => {
   return 'CMT' + result;
 };
 //get comment theo postId
-const GetComment = async (body) => {
-  let { PostId } = body;
+const GetComment = async (PostId) => {
+  let { PostId } = PostId;
   console.log(PostId);
   try {
     let comment = await Comment.find({ PostId: PostId });
