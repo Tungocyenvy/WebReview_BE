@@ -15,7 +15,12 @@ router.post('/reply', jwt.verify, commentController.replyComment);
 router.get('/:PostId', commentController.getComment);
 router.post('/update', jwt.verify, commentController.updateComment);
 router.post('/updateReply', jwt.verify, commentController.updateReply);
-router.delete('/delete', jwt.verify, commentController.deleteComment);
-router.delete('/deleteReply', jwt.verify, commentController.deleteReply);
+router.delete('/delete/:id', jwt.verify, commentController.deleteComment);
+router.delete(
+  '/deleteReply/:idCmt/:id',
+  jwt.verify,
+  commentController.deleteReply,
+);
+//router.get('/deleteReply/:idCmt', jwt.verify, commentController.deleteReply);
 
 module.exports = router;

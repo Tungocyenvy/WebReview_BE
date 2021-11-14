@@ -85,9 +85,11 @@ const updateReply = async (req, res, next) => {
 
 const deleteComment = async (req, res, next) => {
   const token = req.value.body.token.data;
+  const idComment = req.params.id;
+  //console.log(idComment);
   const resService = await commentService.DeleteComment(
     { AccountId: token },
-    req.body,
+    idComment,
   );
 
   if (resService.statusCode === 200 || resService.statusCode === 201)
@@ -102,9 +104,14 @@ const deleteComment = async (req, res, next) => {
 
 const deleteReply = async (req, res, next) => {
   const token = req.value.body.token.data;
+  const idComment = req.params.idCmt;
+  console.log(idComment);
+  const idReply = req.params.id;
+  console.log(idReply);
   const resService = await commentService.DeleteReply(
     { AccountId: token },
-    req.body,
+    idComment,
+    idReply,
   );
 
   if (resService.statusCode === 200 || resService.statusCode === 201)

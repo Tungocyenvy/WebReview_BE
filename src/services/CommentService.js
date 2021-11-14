@@ -292,11 +292,12 @@ const UpdateReply = async (token, body) => {
   }
 };
 
-const DeleteComment = async (token, body) => {
+const DeleteComment = async (token, idComment) => {
   let { AccountId } = token;
   console.log('Email comment: ');
   console.log(AccountId);
-  let { _id } = body;
+  let _id = idComment;
+  console.log(_id);
   try {
     const dataComment = { _id: _id, AccountId: AccountId };
     const comment = await Comment.findOneAndDelete(dataComment);
@@ -320,11 +321,14 @@ const DeleteComment = async (token, body) => {
   }
 };
 
-const DeleteReply = async (token, body) => {
+const DeleteReply = async (token, idCmt, idReply) => {
   let { AccountId } = token;
   console.log('Email comment: ');
   console.log(AccountId);
-  let { _id, idComment } = body;
+  let idComment = idCmt;
+  let _id = idReply;
+  console.log(idComment);
+  console.log(_id);
   try {
     const comment = await Comment.findOne({ _id: idComment });
     console.log(comment);
@@ -342,6 +346,7 @@ const DeleteReply = async (token, body) => {
       const new_replys = replys.filter((e) => {
         return e._id !== _id;
       });
+      console.log(replys);
       comment.Reply = new_replys;
       await comment.save();
       return {
