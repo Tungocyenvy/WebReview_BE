@@ -17,7 +17,7 @@ const getComment = async (req, res, next) => {
 const postComment = async (req, res, next) => {
   const token = req.value.body.token.data;
   const resService = await commentService.PostComment(
-    { Email: token },
+    { AccountId: token },
     req.body,
   );
 
@@ -34,7 +34,7 @@ const postComment = async (req, res, next) => {
 const replyComment = async (req, res, next) => {
   const token = req.value.body.token.data;
   const resService = await commentService.ReplyComment(
-    { Email: token },
+    { AccountId: token },
     req.body,
   );
 
@@ -51,7 +51,7 @@ const replyComment = async (req, res, next) => {
 const updateComment = async (req, res, next) => {
   const token = req.value.body.token.data;
   const resService = await commentService.UpdateComment(
-    { Email: token },
+    { AccountId: token },
     req.body,
   );
 
@@ -68,7 +68,7 @@ const updateComment = async (req, res, next) => {
 const updateReply = async (req, res, next) => {
   const token = req.value.body.token.data;
   const resService = await commentService.UpdateReply(
-    { Email: token },
+    { AccountId: token },
     req.body,
   );
 
@@ -85,7 +85,7 @@ const updateReply = async (req, res, next) => {
 const deleteComment = async (req, res, next) => {
   const token = req.value.body.token.data;
   const resService = await commentService.DeleteComment(
-    { Email: token },
+    { AccountId: token },
     req.body,
   );
 
@@ -102,7 +102,7 @@ const deleteComment = async (req, res, next) => {
 const deleteReply = async (req, res, next) => {
   const token = req.value.body.token.data;
   const resService = await commentService.DeleteReply(
-    { Email: token },
+    { AccountId: token },
     req.body,
   );
 

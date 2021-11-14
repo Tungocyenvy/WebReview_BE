@@ -20,16 +20,17 @@ const GetComment = async (body) => {
   console.log(PostId);
   try {
     let comment = await Comment.find({ PostId: PostId });
-    if (comment.length === 0) {
+    let countCmt = comment.length;
+    if (countCmt === 0) {
       comment = {};
       return {
         msg: 'Không có bình luận nào!',
         statusCode: 300,
-        data: { comment },
+        data: { comment, countCmt },
       };
     }
     // dem so luong cmt
-    let countCmt = comment.length;
+
     for (var i = 0; i < comment.length; i++) {
       const replys = comment[i].Reply;
       countCmt += replys.length;
@@ -94,7 +95,7 @@ const GetComment = async (body) => {
     return {
       msg: 'Lấy tất cả bình luận thành công!',
       statusCode: 200,
-      data: { comment },
+      data: { comment, countCmt },
     };
   } catch (error) {
     return {
@@ -106,9 +107,9 @@ const GetComment = async (body) => {
 
 //post comment
 const PostComment = async (token, body) => {
-  let { Email } = token;
+  let { AccountId } = token;
   //console.log('Email comment: ');
-  //console.log(Email);
+  console.log(AccountId);
   let { Content, PostId } = body;
   try {
     const base = '0123456789';
@@ -124,12 +125,9 @@ const PostComment = async (token, body) => {
         flag = false;
       }
     }
-    const account = await Account.findOne({ Email: Email });
-    const accountId = account._id;
-    //console.log(accountId);
     const newComment = new Comment({
       _id: randomId,
-      AccountId: accountId,
+      AccountId: AccountId,
       Content,
       PostId,
       CreateAt: Date.now(),
@@ -160,9 +158,9 @@ const PostComment = async (token, body) => {
 
 //reply comment
 const ReplyComment = async (token, body) => {
-  let { Email } = token;
+  let { AccountId } = token;
   //console.log('Email reply: ');
-  //console.log(Email);
+  console.log(AccountId);
   let { Content, _id } = body;
   try {
     const comment = await Comment.findOne({ _id: _id });
@@ -190,12 +188,10 @@ const ReplyComment = async (token, body) => {
         flag = false;
       }
     }
-    const account = await Account.findOne({ Email: Email });
-    const accountId = account._id;
     console.log('replys:' + replys);
     var content = {};
     content._id = randomId;
-    content.AccountId = accountId;
+    content.AccountId = AccountId;
     content.Content = Content;
     content.CreateAt = Date.now();
     replys.push(content);
@@ -215,15 +211,13 @@ const ReplyComment = async (token, body) => {
 };
 
 const UpdateComment = async (token, body) => {
-  let { Email } = token;
+  let { AccountId } = token;
   console.log('Email comment: ');
-  console.log(Email);
+  console.log(AccountId);
   let { Content, _id } = body;
   //console.log(_id);
   try {
-    const account = await Account.findOne({ Email: Email });
-    const accountId = account._id;
-    const comment = await Comment.findOne({ _id: _id, AccountId: accountId });
+    const comment = await Comment.findOne({ _id: _id, AccountId: AccountId });
     if (!comment) {
       comment = {};
       return {
@@ -259,9 +253,9 @@ const UpdateComment = async (token, body) => {
 };
 
 const UpdateReply = async (token, body) => {
-  let { Email } = token;
+  let { AccountId } = token;
   console.log('Email comment: ');
-  console.log(Email);
+  console.log(AccountId);
   let { Content, _id, idComment } = body;
   //console.log(_id);
   try {
@@ -299,14 +293,12 @@ const UpdateReply = async (token, body) => {
 };
 
 const DeleteComment = async (token, body) => {
-  let { Email } = token;
+  let { AccountId } = token;
   console.log('Email comment: ');
-  console.log(Email);
+  console.log(AccountId);
   let { _id } = body;
   try {
-    const account = await Account.findOne({ Email: Email });
-    const accountId = account._id;
-    const dataComment = { _id: _id, AccountId: accountId };
+    const dataComment = { _id: _id, AccountId: AccountId };
     const comment = await Comment.findOneAndDelete(dataComment);
     if (!comment) {
       comment = {};
@@ -329,9 +321,9 @@ const DeleteComment = async (token, body) => {
 };
 
 const DeleteReply = async (token, body) => {
-  let { Email } = token;
+  let { AccountId } = token;
   console.log('Email comment: ');
-  console.log(Email);
+  console.log(AccountId);
   let { _id, idComment } = body;
   try {
     const comment = await Comment.findOne({ _id: idComment });
