@@ -15,24 +15,24 @@ app.use(cors());
 //Access-Controll-Allow-Origin
 app.options('*', cors());
 
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
-next();
+  next();
 });
 
 
-app.use(express.json({limit: '50mb'}));
-app.use(express.urlencoded({limit: '50mb',extended: true,}));
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ limit: '50mb', extended: true, }));
 
 app.use(morgan("dev"))
 
 
 
 
-app.use('/account',route);
-app.use('/post',route);
-app.use('/comment',route);
+app.use('/account', route);
+app.use('/post', route);
+app.use('/comment', route);
 //route(app);
 //app.get('/', (req, res) => res.sendFile(__dirname + "/index.html"));
 const port = process.env.PORT;
-app.listen(port,()=>console.log(`http://localhost:${port}`))
+app.listen(port, () => console.log(`http://localhost:${port}`))
