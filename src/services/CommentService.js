@@ -296,11 +296,11 @@ const DeleteComment = async (token, idComment) => {
   let { AccountId } = token;
   console.log('Email comment: ');
   console.log(AccountId);
-  let _id = idComment;
-  console.log(_id);
+  let id = idComment;
+  console.log(id);
   try {
-    const dataComment = { _id: _id, AccountId: AccountId };
-    const comment = await Comment.findOneAndDelete(dataComment);
+    const comment = await Comment.findOne({ _id: id });
+    //console.log(comment);
     if (!comment) {
       comment = {};
       return {
@@ -309,9 +309,17 @@ const DeleteComment = async (token, idComment) => {
         data: { comment },
       };
     }
+    if (comment.AccountId !== AccountId) {
+      return {
+        msg: 'Tài khoản không có quyền xóa bình luận này',
+        statusCode: 300,
+      };
+    }
+    await Comment.findOneAndDelete({ _id: id });
     return {
       msg: 'Xóa bình luận thành công',
       statusCode: 200,
+      data: { comment },
     };
   } catch (error) {
     return {
@@ -342,21 +350,26 @@ const DeleteReply = async (token, idCmt, idReply) => {
     }
     const replys = comment.Reply;
     console.log(replys);
-    if (replys.length > 0) {
-      const new_replys = replys.filter((e) => {
-        return e._id !== _id;
-      });
-      console.log(replys);
-      comment.Reply = new_replys;
-      await comment.save();
-      return {
-        msg: 'Xóa bình luận thành công',
-        statusCode: 200,
-        data: comment,
-      };
+    for (var i = 0; i < replys.length; i++) {
+      if (replys[i]._id === _id) {
+        if (replys[i].AccountId !== AccountId) {
+          return {
+            msg: 'Tài khoản không có quyền xóa bình luận này',
+            statusCode: 300,
+          };
+        }
+        replys.splice(i, 1);
+        comment.Reply = replys;
+        await comment.save();
+        return {
+          msg: 'Xóa bình luận thành công',
+          statusCode: 200,
+          data: comment,
+        };
+      }
     }
     return {
-      msg: 'Không có reply nào',
+      msg: 'Không tìm thấy bình luận',
       statusCode: 300,
     };
   } catch (error) {
