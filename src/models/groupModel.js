@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const schema = mongoose.Schema;
 
 const GroupSchema = new schema({
-  _id: String,
+  _id: { type: String },
   Name: { type: String, require: true },
 });
 

@@ -89,7 +89,7 @@ const createCategory = async (body) => {
 
     if (data.length <= 0) {
       return {
-        msg: 'GroupId không tồn tạo!',
+        msg: 'GroupId không tồn tại!',
         statusCode: 300,
       };
     }
@@ -140,7 +140,7 @@ const updateCategory = async (body, CateId) => {
 
     if (data.length <= 0) {
       return {
-        msg: 'GroupId không tồn tạo!',
+        msg: 'GroupId không tồn tại!',
         statusCode: 300,
       };
     }
@@ -169,7 +169,7 @@ const updateCategory = async (body, CateId) => {
   }
 };
 
-//Sửa category
+//xóa category
 const deleteCategory = async (body, CateId) => {
   let { GroupId } = body;
   console.log(GroupId);
@@ -182,7 +182,7 @@ const deleteCategory = async (body, CateId) => {
 
     if (data.length <= 0) {
       return {
-        msg: 'GroupId không tồn tạo!',
+        msg: 'GroupId không tồn tại!',
         statusCode: 300,
       };
     }
