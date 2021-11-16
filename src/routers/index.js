@@ -1,5 +1,5 @@
 const express = require('express');
-const router = express.Router();
+//const router = express.Router();
 
 const account = require('./accountRouter');
 const post = require('./postRouter');
@@ -7,10 +7,12 @@ const comment = require('./commentRouter');
 const category = require('./categoryRouter');
 const uploadImage = require('./uploadImageRouter');
 
-router.use('/', account);
-router.use('/', post);
-router.use('/', comment);
-router.use('/', category);
-router.use('/', uploadImage);
+function router(app) {
+  app.use('/account', account);
+  app.use('/post', post);
+  app.use('/comment', comment);
+  app.use('/category', category);
+  app.use('/image', uploadImage);
+}
 
 module.exports = router;

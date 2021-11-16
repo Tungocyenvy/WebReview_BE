@@ -205,13 +205,14 @@ const getUserDataService = async (body) => {
 const UpdateUserService = async (AccountId, body) => {
   try {
     console.log(AccountId);
-    const data = await Account.findOneAndUpdate({ _id: AccountId }, body);
-    console.log(data);
+    await Account.findOneAndUpdate({ _id: AccountId }, body);
+    const res = await Account.findOne({ _id: AccountId });
+    console.log(res);
     //check data null
     return {
       msg: 'Cập nhập thông tin thành công',
       statusCode: 200,
-      data: data,
+      data: res,
     };
   } catch (err) {
     console.log(err);

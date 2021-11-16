@@ -27,12 +27,8 @@ app.use(express.urlencoded({ limit: '50mb', extended: true, }));
 app.use(morgan("dev"))
 
 
+route(app);
 
-
-app.use('/account', route);
-app.use('/post', route);
-app.use('/comment', route);
-app.use('/image', route);
 //route(app);
 //app.get('/', (req, res) => res.sendFile(__dirname + "/index.html"));
 const port = process.env.PORT;
