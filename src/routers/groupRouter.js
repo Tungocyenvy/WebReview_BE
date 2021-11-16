@@ -11,12 +11,13 @@ router.post(
   groupController.createGroup,
 );
 
-router.put(
+router.post(
   '/getGroup/:Id',
   validate.validateBody(groupValidate.update),
   groupController.updateGroup,
 );
 
-router.delete('/getGroup/:Id', groupController.deleteGroup);
+router.put('/getGroup/:Id', groupController.changeStatusGroup);
+//router.delete('/getGroup/:Id', groupController.deleteGroup);
 
 module.exports = router;

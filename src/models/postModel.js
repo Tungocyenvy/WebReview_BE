@@ -17,6 +17,7 @@ const PostSchema = new schema({
           AccountId: { type: String, require: true },
           CategoryId: { type: String, require: true },
           Status: { type: Boolean, require: true },
+          IsShow: { type: Boolean, default: true },
           CreateAt: { type: Date, require: true },
         },
       ],

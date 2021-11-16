@@ -1,4 +1,6 @@
 const Group = require('../models/groupModel');
+const categoryService = require('./CategoryService');
+const Category = require('../models/categoryModel');
 
 //Lấy cate cho tất cả các trang {admin}
 const getGroup = async () => {
@@ -73,8 +75,41 @@ const updateGroup = async (Name, Id) => {
   }
 };
 
+//Chỉnh sửa status group thành false ~ xóa group
+const changeStatusGroup = async (Id) => {
+  try {
+    const GroupId = Id;
+    await Group.findOneAndUpdate({ _id: Id }, { Status: false });
+
+    //Lấy Cate theo groupId
+    let lstCate = (await categoryService.getCategorybyGroupId({ GroupId }))
+      .data;
+    lstCate = lstCate.Category;
+
+    //Đổi status ở cate
+    for (const i in lstCate) {
+      let CateId = lstCate[i].id;
+      await categoryService.changeStatusCate({ GroupId }, CateId);
+    }
+
+    const data = (await getGroup()).data;
+    if (data) {
+      return {
+        msg: 'Chỉnh xóa Group ' + Id + ' thành công!',
+        statusCode: 200,
+        data: data,
+      };
+    }
+  } catch {
+    return {
+      msg: 'Xảy ra lỗi trong quá trình thêm thông tin',
+      statusCode: 300,
+    };
+  }
+};
 //Xóa Group
-const deleteGroup = async (Id) => {
+/** Bỏ chuyển qua change status*/
+/*const deleteGroup = async (Id) => {
   try {
     await Group.findOneAndDelete({ _id: Id });
     const data = (await getGroup()).data;
@@ -92,11 +127,11 @@ const deleteGroup = async (Id) => {
       statusCode: 300,
     };
   }
-};
+};*/
 
 module.exports = {
   getGroup,
   createGroup,
   updateGroup,
-  deleteGroup,
+  changeStatusGroup,
 };

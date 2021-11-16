@@ -59,9 +59,26 @@ const updateCategory = async (req, res, next) => {
   return controller.sendSuccess(res, {}, resService.statusCode, resService.msg);
 };
 
-const deleteCategory = async (req, res, next) => {
+//func delete
+/* Bỏ chuyển qua change status */
+/*const deleteCategory = async (req, res, next) => {
   const CateId = req.params.CateId;
   const resService = await categoryService.deleteCategory(req.body, CateId);
+  if (resService.statusCode === 200) {
+    return controller.sendSuccess(
+      res,
+      resService.data,
+      resService.statusCode,
+      resService.msg,
+    );
+  }
+  return controller.sendSuccess(res, {}, resService.statusCode, resService.msg);
+};*/
+
+const changeStatusCate = async (req, res, next) => {
+  const CateId = req.params.CateId;
+  const GroupId = req.body;
+  const resService = await categoryService.changeStatusCate(GroupId, CateId);
   if (resService.statusCode === 200) {
     return controller.sendSuccess(
       res,
@@ -78,5 +95,5 @@ module.exports = {
   getCategory,
   createCategory,
   updateCategory,
-  deleteCategory,
+  changeStatusCate,
 };

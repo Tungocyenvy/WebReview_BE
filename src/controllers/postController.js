@@ -71,9 +71,55 @@ const searchPost = async (req, res, next) => {
   return controller.sendSuccess(res, {}, resService.statusCode, resService.msg);
 };
 
+const updatePost = async (req, res, next) => {
+  // const TokenID = req.value.body.token?.data;
+  const GroupId = req.params.GroupId;
+  const PostId = req.params.PostId;
+  const AccountId = req.value.body.token.data;
+  const data = req.body;
+  //const { token, ...data } = req.value.body;
+  const resService = await postService.updatePost({
+    AccountId,
+    data,
+    GroupId,
+    PostId,
+  });
+  if (resService.statusCode === 200) {
+    return controller.sendSuccess(
+      res,
+      resService.data,
+      resService.statusCode,
+      resService.msg,
+    );
+  }
+  return controller.sendSuccess(res, {}, resService.statusCode, resService.msg);
+};
+
+const getDetailPost = async (req, res, next) => {
+  const TokenID = req.value.body.token;
+  const GroupId = req.params.GroupId;
+  const PostId = req.params.PostId;
+  const resService = await postService.getDetailPost({
+    TokenID,
+    GroupId,
+    PostId,
+  });
+  if (resService.statusCode === 200) {
+    return controller.sendSuccess(
+      res,
+      resService.data,
+      resService.statusCode,
+      resService.msg,
+    );
+  }
+  return controller.sendSuccess(res, {}, resService.statusCode, resService.msg);
+};
+
 module.exports = {
   getPostbyGroupId,
   getPost,
   getPostbyCategory,
   searchPost,
+  updatePost,
+  getDetailPost,
 };

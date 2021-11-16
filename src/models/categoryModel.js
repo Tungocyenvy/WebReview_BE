@@ -11,6 +11,7 @@ const CategorySchema = new schema({
           _id: String,
           id: { type: String, require: true },
           Name: { type: String, require: true },
+          Status: { type: Boolean, default: true },
         },
       ],
     },

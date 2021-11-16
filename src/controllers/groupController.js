@@ -59,9 +59,9 @@ const updateGroup = async (req, res, next) => {
   return controller.sendSuccess(res, {}, resService.statusCode, resService.msg);
 };
 
-const deleteGroup = async (req, res, next) => {
+const changeStatusGroup = async (req, res, next) => {
   const Id = req.params.Id;
-  const resService = await groupService.deleteGroup(Id);
+  const resService = await groupService.changeStatusGroup(Id);
   if (resService.statusCode === 200) {
     return controller.sendSuccess(
       res,
@@ -72,10 +72,24 @@ const deleteGroup = async (req, res, next) => {
   }
   return controller.sendSuccess(res, {}, resService.statusCode, resService.msg);
 };
+/**Bỏ delete */
+// const deleteGroup = async (req, res, next) => {
+//   const Id = req.params.Id;
+//   const resService = await groupService.deleteGroup(Id);
+//   if (resService.statusCode === 200) {
+//     return controller.sendSuccess(
+//       res,
+//       resService.data,
+//       resService.statusCode,
+//       resService.msg,
+//     );
+//   }
+//   return controller.sendSuccess(res, {}, resService.statusCode, resService.msg);
+// };
 
 module.exports = {
   getGroup,
   createGroup,
   updateGroup,
-  deleteGroup,
+  changeStatusGroup,
 };

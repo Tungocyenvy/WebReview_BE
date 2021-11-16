@@ -20,6 +20,8 @@ router.put(
   validate.validateBody(categoryValidate.update),
   categoryController.updateCategory,
 );
-router.post('/getCategory/:CateId', categoryController.deleteCategory);
+
+router.post('/getCategory/:CateId', categoryController.changeStatusCate);
+//router.post('/getCategory/:CateId', categoryController.deleteCategory);
 
 module.exports = router;
