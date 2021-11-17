@@ -27,7 +27,6 @@ const getRates = async (Group, AccountId, GroupId) => {
 
     //lấy fullname từ id account
     const accountId = dataPost.AccountId;
-    //console.log(dataPost.AccountId);
     const account = await Account.findOne({ _id: accountId });
     const FullName = account.FullName;
 
@@ -49,9 +48,6 @@ const getRates = async (Group, AccountId, GroupId) => {
       temp = { FullName, dataPost, Rating, RatingbyAcc, Comment, CommentCount };
     }
     Group[i] = temp;
-
-    console.log('Group[' + i + ']');
-    console.log(Group[i]);
   }
   return { data: Group };
 };
@@ -62,35 +58,43 @@ const getPostbyGroupId = async (body) => {
   let { AccountId, GroupId } = body;
   //const Id = 'Review';
   try {
+    console.log('FUNC GET POST BY GROUP ID');
     const post = await Post.find({});
     const data = post[0].Group;
 
     let group = data.find((x) => x.Id === GroupId);
-    group = group.Post;
-    //Lấy bài viết đã duyệt
-    group = group.filter((x) => x.Status === true && x.IsShow === true);
+    if (group) {
+      group = group.Post;
+      //Lấy bài viết đã duyệt
+      group = group.filter((x) => x.Status === true && x.IsShow === true);
 
-    if (group.length <= 0) {
-      return {
-        msg: 'Không có bài viết nào!',
-        statusCode: 300,
-      };
-    } else {
-      //Lấy rating của bài viết và rate của riêng account
-      group = (await getRates(group, AccountId, GroupId)).data;
-
-      if (group == -1) {
+      if (group.length <= 0) {
         return {
-          msg: 'Lỗi trong quá trình lấy Rating!',
+          msg: 'Không có bài viết nào!',
           statusCode: 300,
         };
       } else {
-        return {
-          msg: 'Lấy tất cả bài viết trong ' + GroupId + ' thành công!',
-          statusCode: 200,
-          data: group,
-        };
+        //Lấy rating của bài viết và rate của riêng account
+        group = (await getRates(group, AccountId, GroupId)).data;
+
+        if (group == -1) {
+          return {
+            msg: 'Lỗi trong quá trình lấy Rating!',
+            statusCode: 300,
+          };
+        } else {
+          return {
+            msg: 'Lấy tất cả bài viết trong ' + GroupId + ' thành công!',
+            statusCode: 200,
+            data: group,
+          };
+        }
       }
+    } else {
+      return {
+        msg: 'LKhông có bài viết nào trong group này!',
+        statusCode: 300,
+      };
     }
   } catch {
     return {
@@ -100,28 +104,37 @@ const getPostbyGroupId = async (body) => {
   }
 };
 
-//Lấy tất cả các bài viết dc duyệt theo loại {Id lọc cho các trang Review,Exp, Forum}
+/*Lấy tất cả các bài viết dc duyệt theo loại {Id lọc cho các trang Review,Exp, Forum}*/
 const getPostbyCategory = async (body) => {
   let { AccountId, GroupId, CategoryId } = body;
   try {
+    console.log('FUNC GET POST BY CATEGORY ID');
     //Lấy tất cả bài đã được duyệt
     let post = await getPostbyGroupId({ AccountId, GroupId });
     post = post.data;
+    console.log(post);
 
     //Tìm và lấy theo loại
-    let result = post.filter((x) => x.dataPost.CategoryId === CategoryId);
-    console.log(result);
+    if (post) {
+      let result = post.filter((x) => x.dataPost.CategoryId === CategoryId);
+      console.log(result);
 
-    if (result.length <= 0) {
+      if (result.length <= 0) {
+        return {
+          msg: 'Không có bài viết nào!',
+          statusCode: 300,
+        };
+      } else {
+        return {
+          msg: 'Lấy tất cả bài viết ' + CategoryId + ' thành công!',
+          statusCode: 200,
+          data: result,
+        };
+      }
+    } else {
       return {
         msg: 'Không có bài viết nào!',
         statusCode: 300,
-      };
-    } else {
-      return {
-        msg: 'Lấy tất cả bài viết ' + CategoryId + ' thành công!',
-        statusCode: 200,
-        data: result,
       };
     }
   } catch {
@@ -140,7 +153,7 @@ const getPost = async (body) => {
     //Lấy bài review
     let GroupId = 'Review';
     const review = (await getPostbyGroupId({ AccountId, GroupId })).data;
-    console.log('reciew' + review);
+    //console.log('review' + review);
 
     //lấy bài Eperience
     GroupId = 'Experience';
@@ -183,20 +196,27 @@ const getDetailPost = async (body) => {
   let { AccountId, GroupId, PostId } = body;
   try {
     //Lấy bài theo group
-    let post = await getPostbyGroupId({ AccountId, GroupId });
-    post = post.data;
-    let result = post.filter((x) => x.dataPost.Id === PostId);
+    let post = (await getPostbyGroupId({ AccountId, GroupId })).data;
+    //post = post.data;
+    if (post) {
+      let result = post.filter((x) => x.dataPost.Id === PostId);
 
-    if (result.length <= 0) {
-      return {
-        msg: 'Không có bài viết nào!',
-        statusCode: 300,
-      };
+      if (result.length <= 0) {
+        return {
+          msg: 'Không tìm thấy bài viết!',
+          statusCode: 300,
+        };
+      } else {
+        return {
+          msg: 'Lấy bài viết ' + PostId + ' thành công!',
+          statusCode: 200,
+          data: result,
+        };
+      }
     } else {
       return {
-        msg: 'Lấy bài viết ' + PostId + ' thành công!',
-        statusCode: 200,
-        data: result,
+        msg: 'Không có bài viết nào của group này!',
+        statusCode: 300,
       };
     }
   } catch {
@@ -219,29 +239,36 @@ const updatePost = async (body) => {
 
     //Lọc bài viết theo group
     let post = (await getPostbyGroupId({ AccountId, GroupId })).data;
-    let tmp = [];
+    if (post) {
+      let tmp = [];
 
-    //Lấy data của bài viết
-    for (const i in post) {
-      tmp.push(post[i].dataPost);
-    }
+      //Lấy data của bài viết
+      for (const i in post) {
+        tmp.push(post[i].dataPost);
+      }
 
-    //Cập nhập data bài viết mới
-    tmp = tmp.map((x) => (x.Id === PostId ? data : x));
+      //Cập nhập data bài viết mới
+      tmp = tmp.map((x) => (x.Id === PostId ? data : x));
 
-    //Cập nhật data của cả group
-    let postMap = { Id: GroupId, Post: tmp };
-    group = group.map((x) => (x.Id === GroupId ? postMap : x));
+      //Cập nhật data của cả group
+      let postMap = { Id: GroupId, Post: tmp };
+      group = group.map((x) => (x.Id === GroupId ? postMap : x));
 
-    //cập nhập vào collection Post
-    await Post.findOneAndUpdate({ _id }, { Group: group });
-    const res = (await getDetailPost({ AccountId, GroupId, PostId })).data;
+      //cập nhập vào collection Post
+      await Post.findOneAndUpdate({ _id }, { Group: group });
+      const res = (await getDetailPost({ AccountId, GroupId, PostId })).data;
 
-    if (res) {
+      if (res) {
+        return {
+          msg: 'Update bài viết thành công!',
+          statusCode: 200,
+          data: { res },
+        };
+      }
+    } else {
       return {
-        msg: 'Update bài viết thành công!',
-        statusCode: 200,
-        data: { res },
+        msg: 'Không có bài viết nào trong group này vui lòng kiểm tra lại thông tin!',
+        statusCode: 300,
       };
     }
   } catch {

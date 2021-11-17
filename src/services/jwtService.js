@@ -24,18 +24,6 @@ async function verify(req, res, next) {
           content
       */
     let token = '';
-
-    // if (!header) {
-    //   res.json({
-    //     data: {
-    //       tokenVerificationData: {
-    //         access: false,
-    //         message: 'No token provided',
-    //       },
-    //     },
-    //   });
-    //   return;
-    // }
     if (header) {
       token = header.split(' ')[1];
       console.log('tokenService token : ' + token);

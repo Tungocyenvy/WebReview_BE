@@ -12,7 +12,6 @@ const getRating = async (PostId, AccountId) => {
     if (rate !== null) {
       //rating của toàn bài viết
       const dataRate = rate.Rate;
-      //console.log('dataRate' + dataRate);
       //trả ra email từ accountid
       let Rates = [];
       for (const i in dataRate) {
@@ -20,8 +19,7 @@ const getRating = async (PostId, AccountId) => {
         const data = await Account.findOne({ _id: accountId });
         const FullName = data.FullName;
         const Rate = dataRate[i].Rate;
-        // console.log('AccountId' + AccountId);
-        // console.log('accountId' + accountId);
+
         if (accountId === AccountId) {
           byAccount = Rate;
         }
@@ -33,17 +31,8 @@ const getRating = async (PostId, AccountId) => {
 
       const count = Object.values(Rates).length;
       const AvgRate = rate.AvgRate;
-      console.log('AvgRate' + AvgRate);
+
       rating = { Rates, AvgRate, count };
-
-      //lấy theo account
-      //const byaccount = dataRate.find((x) => x.AccountId === AccountId);
-      //const byaccount= await Rates.findOne(AccountId:)
-      // console.log(byaccount);
-      // if (byaccount) {
-      //   byAccount = byaccount.Rate;
-
-      // }
     }
     return {
       data: { rating, byAccount },

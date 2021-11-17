@@ -11,7 +11,7 @@ router.get('/getPost', jwt.verify, postController.getPost);
 router.get('/getPost/:GroupId', jwt.verify, postController.getPostbyGroupId);
 
 router.get(
-  '/getPost/:GroupId/:PostId',
+  '/getPost/detail/:GroupId/:PostId',
   jwt.verify,
   postController.getDetailPost,
 );

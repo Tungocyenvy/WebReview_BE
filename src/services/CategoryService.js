@@ -1,6 +1,7 @@
 const Category = require('../models/categoryModel');
 const Group = require('../models/groupModel');
 const PostService = require('./PostService');
+// const GroupService = require('./GroupService');
 
 const getRandomInt = (min, max) => {
   return Math.floor(Math.random() * (max - min)) + min;
@@ -28,20 +29,29 @@ const getCategorybyGroupId = async (body) => {
   let { GroupId } = body;
   //const Id = 'Review';
   try {
+    console.log('FUNC GET CATEGORY BY GROUP ID');
     const category = (await getCategory()).data;
-    let post = category.find((x) => x.id === GroupId);
-    console.log('post' + post);
-
-    if (post.length <= 0) {
+    if (category) {
+      let post = category.find((x) => x.id === GroupId);
+      console.log(post);
+      if (post) {
+        console.log(1);
+        return {
+          msg: 'Lấy tất cả category của ' + GroupId + ' thành công!',
+          statusCode: 200,
+          data: post,
+        };
+      } else {
+        console.log(0);
+        return {
+          msg: 'Không có category nào trong group!',
+          statusCode: 300,
+        };
+      }
+    } else {
       return {
         msg: 'Không có category nào!',
         statusCode: 300,
-      };
-    } else {
-      return {
-        msg: 'Lấy tất cả category của ' + GroupId + ' thành công!',
-        statusCode: 200,
-        data: post,
       };
     }
   } catch {
@@ -58,26 +68,47 @@ const getCategory = async () => {
   console.log('getCategory');
   try {
     const category = await Category.find({});
-
-    const data = category[0].Group;
-    let Result = [];
-    //Lấy tên Category
-    for (const i in data) {
-      let group = await Group.findOne({ _id: data[i].id });
-      let cate = {};
-      cate.id = data[i].id;
-      cate.Name = group.Name;
-      cate.Category = data[i].Category;
-      Result.push(cate);
+    if (category) {
+      const data = category[0].Group;
+      let Result = [];
+      //Lấy tên group
+      const lstGroup = await Group.find({ Status: true });
+      if (lstGroup) {
+        for (const i in data) {
+          let group = lstGroup.find((x) => x._id === data[i].id);
+          //let group = await Group.findOne({ _id: data[i].id });
+          if (group) {
+            let lstCate = data[i].Category;
+            lstCate = lstCate.filter((x) => x.Status === true);
+            if (lstCate) {
+              let cate = {};
+              cate.id = data[i].id;
+              cate.Name = group.Name;
+              cate.Category = lstCate;
+              Result.push(cate);
+            }
+          }
+        }
+        console.log(Result);
+        if (!Result) {
+          return {
+            msg: 'Không có category nào!',
+            statusCode: 300,
+          };
+        } else {
+          return {
+            msg: 'Lấy tất cả category thành công!',
+            statusCode: 200,
+            data: Result,
+          };
+        }
+      }
+    } else {
+      return {
+        msg: 'Không có category nào!',
+        statusCode: 300,
+      };
     }
-
-    console.log(Result);
-    return {
-      msg: 'Lấy tất cả category thành công!',
-      statusCode: 200,
-      data: Result,
-    };
-    // }
   } catch {
     return {
       msg: 'Xảy ra lỗi trong quá trình lấy thông tin',
@@ -96,7 +127,7 @@ const createCategory = async (body) => {
     let data = group.find((x) => x.id === GroupId);
     console.log(data);
 
-    if (data.length <= 0) {
+    if (!data) {
       return {
         msg: 'GroupId không tồn tại!',
         statusCode: 300,
@@ -142,34 +173,35 @@ const updateCategory = async (body, CateId) => {
   console.log(CateId);
   try {
     const category = await Category.find({});
-    const _id = category[0]._id;
-    let group = category[0].Group;
-    let data = group.find((x) => x.id === GroupId);
-    console.log(data);
+    if (category) {
+      const _id = category[0]._id;
+      let group = category[0].Group;
+      let data = group.find((x) => x.id === GroupId);
+      console.log(data);
 
-    if (data.length <= 0) {
-      return {
-        msg: 'GroupId không tồn tại!',
-        statusCode: 300,
-      };
-    }
-    let tmp = { id: CateId, Name: CateName };
+      if (!data) {
+        return {
+          msg: 'GroupId không tồn tại!',
+          statusCode: 300,
+        };
+      }
+      let tmp = { id: CateId, Name: CateName };
 
-    let cate = data.Category;
-    cate = cate.map((x) => (x.id === CateId ? tmp : x));
-    data.Category = cate;
-    group = group.map((x) => (x.id === GroupId ? data : x));
-    await Category.findOneAndUpdate({ _id }, { Group: group });
-    const resave = (await getCategory()).data;
-    console.log(resave);
-    if (resave) {
-      return {
-        msg: 'Chỉnh sửa category' + CateId + 'thành công!',
-        statusCode: 200,
-        data: resave,
-      };
+      let cate = data.Category;
+      cate = cate.map((x) => (x.id === CateId ? tmp : x));
+      data.Category = cate;
+      group = group.map((x) => (x.id === GroupId ? data : x));
+      await Category.findOneAndUpdate({ _id }, { Group: group });
+      const resave = (await getCategory()).data;
+      console.log(resave);
+      if (resave) {
+        return {
+          msg: 'Chỉnh sửa category ' + CateId + ' thành công!',
+          statusCode: 200,
+          data: resave,
+        };
+      }
     }
-    // }
   } catch {
     return {
       msg: 'Xảy ra lỗi trong quá trình thêm thông tin',
@@ -234,51 +266,64 @@ const changeStatusCate = async (body, CateId) => {
   console.log(GroupId);
   try {
     const category = await Category.find({});
-    const _id = category[0]._id;
-    let group = category[0].Group;
-    let lstGroup = group.find((x) => x.id === GroupId);
+    console.log(category);
+    if (category) {
+      const _id = category[0]._id;
+      let group = category[0].Group;
+      let lstGroup = group.find((x) => x.id === GroupId);
 
-    if (lstGroup.length <= 0) {
-      return {
-        msg: 'GroupId không tồn tại!',
-        statusCode: 300,
-      };
+      //Kiểm tra GroupId hợp lệ
+      if (!lstGroup) {
+        return {
+          msg: 'GroupId không tồn tại!',
+          statusCode: 300,
+        };
+      }
+
+      //Kiểm tra CateId hợp lệ
+      let tmp = lstGroup.Category.find((x) => x.id === CateId);
+      console.log(tmp);
+      if (!tmp) {
+        return {
+          msg: 'Category không tồn tại!',
+          statusCode: 300,
+        };
+      }
+      tmp.Status = false;
+      //Đổi status trong category
+      let cate = lstGroup.Category;
+      cate = cate.map((x) => (x.id === CateId ? tmp : x));
+      lstGroup.Category = cate;
+      group = group.map((x) => (x.id === GroupId ? lstGroup : x));
+      await Category.findOneAndUpdate({ _id }, { Group: group });
+
+      //Đổi isshow cho post
+      const AccountId = '';
+      const CategoryId = CateId;
+      let Post = (
+        await PostService.getPostbyCategory({ AccountId, GroupId, CategoryId })
+      ).data;
+      console.log(Post);
+      if (Post) {
+        //let lstPost = Post.filter((x) => x.dataPost.CategoryId === CateId);
+        for (const i in Post) {
+          let data = Post[i].dataPost;
+          data.IsShow = false;
+          let PostId = data.Id;
+          await PostService.updatePost({ AccountId, data, GroupId, PostId });
+        }
+      }
+
+      const resave = (await getCategory()).data;
+      console.log(resave);
+      if (resave) {
+        return {
+          msg: 'Xóa category ' + CateId + ' thành công!',
+          statusCode: 200,
+          data: resave,
+        };
+      }
     }
-
-    let tmp = lstGroup.Category.find((x) => x.id === CateId);
-    tmp.Status = false;
-    //Đổi status trong category
-    let cate = lstGroup.Category;
-    cate = cate.map((x) => (x.id === CateId ? tmp : x));
-    lstGroup.Category = cate;
-    group = group.map((x) => (x.id === GroupId ? lstGroup : x));
-    await Category.findOneAndUpdate({ _id }, { Group: group });
-
-    //Đổi isshow cho post
-    const AccountId = '';
-    const CategoryId = CateId;
-    let Post = (
-      await PostService.getPostbyCategory({ AccountId, GroupId, CategoryId })
-    ).data;
-
-    let lstPost = Post.filter((x) => x.dataPost.CategoryId === CateId);
-    for (const i in lstPost) {
-      let data = lstPost[i].dataPost;
-      data.IsShow = false;
-      let PostId = data.Id;
-      await PostService.updatePost({ AccountId, data, GroupId, PostId });
-    }
-
-    const resave = (await getCategory()).data;
-    console.log(resave);
-    if (resave) {
-      return {
-        msg: 'Xóa category' + CateId + 'thành công!',
-        statusCode: 200,
-        data: resave,
-      };
-    }
-    // }
   } catch {
     return {
       msg: 'Xảy ra lỗi trong quá trình thêm thông tin',

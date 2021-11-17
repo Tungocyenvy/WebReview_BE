@@ -22,13 +22,15 @@ const getPostbyGroupId = async (req, res, next) => {
 
 //Lấy bài viết theo loại
 const getPostbyCategory = async (req, res, next) => {
-  const token = req.value.body.token.data;
-  const id = req.params.GroupId;
-  const cate = req.params.CategoryId;
+  const AccountId = req.value.body.token.data;
+  const GroupId = req.params.GroupId;
+  const CategoryId = req.params.CategoryId;
+  console.log('ahihih');
+  console.log(GroupId);
   const resService = await postService.getPostbyCategory({
-    GroupId: id,
-    AccountId: token,
-    CategoryId: cate,
+    AccountId,
+    GroupId,
+    CategoryId,
   });
   if (resService.statusCode === 200) {
     return controller.sendSuccess(

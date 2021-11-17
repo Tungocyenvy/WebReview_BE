@@ -1,11 +1,11 @@
 const Group = require('../models/groupModel');
 const categoryService = require('./CategoryService');
-const Category = require('../models/categoryModel');
+//const Category = require('../models/categoryModel');
 
 //Lấy cate cho tất cả các trang {admin}
 const getGroup = async () => {
   try {
-    const group = await Group.find({});
+    const group = await Group.find({ Status: true });
     return {
       msg: 'Lấy tất cả group thành công!',
       statusCode: 200,
@@ -78,24 +78,27 @@ const updateGroup = async (Name, Id) => {
 //Chỉnh sửa status group thành false ~ xóa group
 const changeStatusGroup = async (Id) => {
   try {
-    const GroupId = Id;
-    await Group.findOneAndUpdate({ _id: Id }, { Status: false });
-
     //Lấy Cate theo groupId
+    const GroupId = Id;
     let lstCate = (await categoryService.getCategorybyGroupId({ GroupId }))
       .data;
-    lstCate = lstCate.Category;
-
-    //Đổi status ở cate
-    for (const i in lstCate) {
-      let CateId = lstCate[i].id;
-      await categoryService.changeStatusCate({ GroupId }, CateId);
+    console.log('lstCate');
+    if (lstCate) {
+      // lstCate = lstCate.data
+      lstCate = lstCate.Category;
+      //Đổi status ở cate
+      for (const i in lstCate) {
+        let CateId = lstCate[i].id;
+        await categoryService.changeStatusCate({ GroupId }, CateId);
+      }
     }
+
+    await Group.findOneAndUpdate({ _id: Id }, { Status: false });
 
     const data = (await getGroup()).data;
     if (data) {
       return {
-        msg: 'Chỉnh xóa Group ' + Id + ' thành công!',
+        msg: 'Xóa Group ' + Id + ' thành công!',
         statusCode: 200,
         data: data,
       };
