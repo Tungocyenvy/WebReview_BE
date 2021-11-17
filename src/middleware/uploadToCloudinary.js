@@ -3,8 +3,21 @@ const uploadImageToCloudinary = async (req, res, next) => {
     next(new Error('No file uploaded!'));
     return;
   }
+  let url = req.file.path;
+  let msg = 'tải lên thành công';
+  let funcNum = req.query.CKEditorFuncNum;
 
-  res.json({ location: req.file.path });
+  res
+    .status(201)
+    .send(
+      "<script>window.parent.CKEDITOR.tools.callFunction(' " +
+        funcNum +
+        " ' , ' " +
+        url +
+        " ' , ' " +
+        msg +
+        "  '); </script>",
+    );
 };
 
 module.exports = { uploadImageToCloudinary };
