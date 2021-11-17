@@ -5,7 +5,7 @@ const uploadImageToCloudinary = async (req, res, next) => {
   }
   let url = req.file.path;
   let msg = 'tải lên thành công';
-  let funcNum = req.query.CKEditorFuncNum;
+  let funcNum = 1;
 
   res
     .status(201)
