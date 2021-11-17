@@ -6,7 +6,7 @@ const fileUploader = require('../config/cloudinary.config');
 
 router.post(
   '/upload',
-  fileUploader.single('image'),
+  fileUploader.single('upload'),
   uploadToCloudinary.uploadImageToCloudinary,
 );
 
