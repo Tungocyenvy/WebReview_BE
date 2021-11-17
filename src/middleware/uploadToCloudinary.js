@@ -4,7 +4,7 @@ const uploadImageToCloudinary = async (req, res, next) => {
     return;
   }
 
-  res.json({ secure_url: req.file.path });
+  res.json({ location: req.file.path });
 };
 
 module.exports = { uploadImageToCloudinary };
