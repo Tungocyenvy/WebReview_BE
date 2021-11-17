@@ -7,6 +7,7 @@ const comment = require('./commentRouter');
 const category = require('./categoryRouter');
 const image = require('./imageRouter');
 const admin = require('./adminRouter');
+const group = require('./groupRouter');
 
 function router(app) {
   app.use('/account', account);
