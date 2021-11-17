@@ -1,5 +1,6 @@
 const Account = require('../models/accountModel');
 
+//ACCOUNT
 const GetAccount = async () => {
   try {
     const accounts = await Account.find({ IsAdmin: false });

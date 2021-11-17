@@ -1,8 +1,15 @@
 const Post = require('../models/postModel');
 const Account = require('../models/accountModel');
+const Group = require('../models/groupModel');
 const { getRating } = require('../services/RatingService');
 const { GetComment } = require('../services/CommentService');
 
+//Tạo id cho Post
+const getPostId = (GroupId, lstPost) => {
+  let Id = Number(lstPost.match(/[0-9]+$/)[0]) + 1;
+  Id = GroupId + Id;
+  return Id;
+};
 //Lấy rate cho bài viết {Group lọc cho các trang Review,Exp, Forum}
 const getRates = async (Group, AccountId, GroupId) => {
   for (const i in Group) {
@@ -145,7 +152,7 @@ const getPostbyCategory = async (body) => {
   }
 };
 
-//Lấy tất cả bài viết cho trang index
+//Lấy tất cả bài viết review,exp,forum cho trang index (15-5-5)
 const getPost = async (body) => {
   let { AccountId } = body;
   //
@@ -227,7 +234,7 @@ const getDetailPost = async (body) => {
   }
 };
 
-//updatePost
+//Chỉnh sửa bài viết
 const updatePost = async (body) => {
   let { AccountId, data, GroupId, PostId } = body;
   //
@@ -279,6 +286,80 @@ const updatePost = async (body) => {
   }
 };
 
+//Tạo bài viết mới
+const createPost = async (AccountId, body) => {
+  let { GroupId, Title, Image, Overview, Content, CategoryId } = body;
+  try {
+    const lstGroup = await Group.find({ _id: GroupId, Status: true });
+    console.log(lstGroup);
+    if (lstGroup.length <= 0) {
+      return {
+        msg: 'GroupId không tồn tại!',
+        statusCode: 300,
+      };
+    } else {
+      const lstPost = await Post.find({});
+      const _id = lstPost[0]._id;
+      let group = lstPost[0].Group;
+
+      let data = group.find((x) => x.Id === GroupId);
+      console.log(data);
+
+      let tmp, id;
+      //Nếu group này chưa có bài viết thì thêm mới
+      if (!data) {
+        id = GroupId + 1;
+        tmp = {
+          Id: id,
+          Title,
+          Image,
+          Overview,
+          Content,
+          AccountId,
+          CategoryId,
+        };
+        let post = { Id: GroupId, Post: tmp };
+        group.push(post);
+      }
+      //Group đã có bài viết rồi
+      else {
+        //Tạo id cho bài viết
+        let lstPost = data.Post[data.Post.length - 1].Id;
+        console.log(lstPost);
+        id = getPostId(GroupId, lstPost);
+        console.log(id);
+        tmp = {
+          Id: id,
+          Title,
+          Image,
+          Overview,
+          Content,
+          AccountId,
+          CategoryId,
+        };
+        data.Post.push(tmp);
+        group = group.map((x) => (x.id === GroupId ? data : x));
+      }
+      await Post.findOneAndUpdate({ _id }, { Group: group });
+      const resave = (await getPost(AccountId)).data;
+      console.log(resave);
+      if (resave) {
+        return {
+          msg: 'Thêm bài viết mới thành công!',
+          statusCode: 200,
+          data: resave,
+        };
+      }
+    }
+  } catch (err) {
+    console.log(err);
+    return {
+      msg: 'Lỗi trong quá trình thêm bài viết',
+      statusCode: 300,
+    };
+  }
+};
+
 const searchPost = async (req) => {
   const searchField = req.query.keyword;
   console.log(searchField);
@@ -323,4 +404,5 @@ module.exports = {
   searchPost,
   updatePost,
   getDetailPost,
+  createPost,
 };

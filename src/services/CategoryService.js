@@ -121,43 +121,52 @@ const getCategory = async () => {
 const createCategory = async (body) => {
   let { GroupId, CateName } = body;
   try {
-    const category = await Category.find({});
-    const _id = category[0]._id;
-    let group = category[0].Group;
-    let data = group.find((x) => x.id === GroupId);
-    console.log(data);
-
-    if (!data) {
+    const lstGroup = await Group.find({ _id: GroupId, Status: true });
+    console.log(lstGroup);
+    if (lstGroup.length <= 0) {
       return {
         msg: 'GroupId không tồn tại!',
         statusCode: 300,
       };
-    }
+    } else {
+      const category = await Category.find({});
+      const _id = category[0]._id;
+      let group = category[0].Group;
+      let data = group.find((x) => x.id === GroupId);
+      console.log(data);
 
-    //Tạo id cho cate
-    let id = getCateId(CateName);
-    //check id có trùng hay không
-    let check = data.Category.find((x) => x.id === id);
-    while (check) {
-      const randomIndex = getRandomInt(0, 10);
-      id = id + randomIndex;
-      check = data.Category.find((x) => x.id === id);
-    }
+      //Tạo id cho cate
+      let id = getCateId(CateName);
+      let tmp = { id: id, Name: CateName };
+      //Nếu group này chưa có category nào thì thêm mới
+      if (!data) {
+        let cate = { id: GroupId, Category: tmp };
+        group.push(cate);
+      }
+      //Group đã có category rồi
+      else {
+        //check id có trùng hay không
+        let check = data.Category.find((x) => x.id === id);
+        while (check) {
+          const randomIndex = getRandomInt(0, 10);
+          id = id + randomIndex;
+          check = data.Category.find((x) => x.id === id);
+        }
 
-    let tmp = { id: id, Name: CateName };
-    data.Category.push(tmp);
-    group = group.map((x) => (x.id === GroupId ? data : x));
-    await Category.findOneAndUpdate({ _id }, { Group: group });
-    const resave = (await getCategory()).data;
-    console.log(resave);
-    if (resave) {
-      return {
-        msg: 'Thêm category thành công!',
-        statusCode: 200,
-        data: resave,
-      };
+        data.Category.push(tmp);
+        group = group.map((x) => (x.id === GroupId ? data : x));
+      }
+      await Category.findOneAndUpdate({ _id }, { Group: group });
+      const resave = (await getCategory()).data;
+      console.log(resave);
+      if (resave) {
+        return {
+          msg: 'Thêm category thành công!',
+          statusCode: 200,
+          data: resave,
+        };
+      }
     }
-    // }
   } catch {
     return {
       msg: 'Xảy ra lỗi trong quá trình thêm thông tin',

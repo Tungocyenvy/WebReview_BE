@@ -29,6 +29,13 @@ router.post(
   postController.updatePost,
 );
 
+router.post(
+  '/createPost',
+  jwt.verify,
+  validate.validateBody(postValidate.create),
+  postController.createPost,
+);
+
 //search
 router.get('/searchPost', postController.searchPost);
 module.exports = router;

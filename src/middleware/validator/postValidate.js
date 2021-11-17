@@ -13,6 +13,14 @@ const SchemaAccount = {
     IsShow: joi.boolean(),
     CreateAt: joi.date(),
   }),
+  create: joi.object().keys({
+    GroupId: joi.string(),
+    Title: joi.string(),
+    Image: joi.string(),
+    Overview: joi.string(),
+    Content: joi.string(),
+    CategoryId: joi.string(),
+  }),
 };
 
 module.exports = SchemaAccount;
