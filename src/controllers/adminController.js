@@ -13,4 +13,36 @@ const getAccount = async (req, res, next) => {
   return controller.sendSuccess(res, {}, resService.statusCode, resService.msg);
 };
 
-module.exports = { getAccount };
+const getPostFalse = async (req, res, next) => {
+  const groupId = req.params.GroupId;
+  const resService = await adminService.GetPostFalse({ GroupId: groupId });
+  if (resService.statusCode === 200) {
+    return controller.sendSuccess(
+      res,
+      resService.data,
+      resService.statusCode,
+      resService.msg,
+    );
+  }
+  return controller.sendSuccess(res, {}, resService.statusCode, resService.msg);
+};
+
+const updateStatusPost = async (req, res, next) => {
+  const groupId = req.params.GroupId;
+  const postId = req.params.PostId;
+  const resService = await adminService.UpdateStatusPost({
+    GroupId: groupId,
+    PostId: postId,
+  });
+  if (resService.statusCode === 200) {
+    return controller.sendSuccess(
+      res,
+      resService.data,
+      resService.statusCode,
+      resService.msg,
+    );
+  }
+  return controller.sendSuccess(res, {}, resService.statusCode, resService.msg);
+};
+
+module.exports = { getAccount, getPostFalse, updateStatusPost };

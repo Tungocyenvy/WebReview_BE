@@ -56,14 +56,11 @@ const createRating = async (AccountId, PostId, body) => {
     console.log(tmp);
     if (rate) {
       //rating của toàn bài viết
-      let AvgRate = 0;
       let dataRate = rate.Rate;
       dataRate.push(tmp);
 
       //Cập nhập lại AvgRate
-      for (const i in dataRate) {
-        AvgRate += dataRate[i].Rate;
-      }
+      let AvgRate = dataRate.map((x) => x.Rate).reduce((a, b) => a + b);
       const count = Object.values(dataRate).length;
       AvgRate = Math.round((AvgRate / count) * 10) / 10;
       console.log(AvgRate);
@@ -102,14 +99,11 @@ const updateRating = async (AccountId, PostId, body) => {
     console.log(tmp);
     if (rate) {
       //rating của toàn bài viết
-      let AvgRate = 0;
       let dataRate = rate.Rate;
       dataRate = dataRate.map((x) => (x.AccountId === AccountId ? tmp : x));
 
       //Cập nhập lại AvgRate
-      for (const i in dataRate) {
-        AvgRate += dataRate[i].Rate;
-      }
+      let AvgRate = dataRate.map((x) => x.Rate).reduce((a, b) => a + b);
       const count = Object.values(dataRate).length;
       AvgRate = Math.round((AvgRate / count) * 10) / 10;
       console.log(AvgRate);
