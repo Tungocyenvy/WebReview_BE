@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const jwt = require('../services/jwtService');
 const postController = require('../controllers/postController');
+const ratingController = require('../controllers/ratingController');
 const validate = require('../middleware/validator/index');
 const postValidate = require('../middleware/validator/postValidate');
 
@@ -50,4 +51,12 @@ router.get(
 
 //search
 router.get('/searchPost', postController.searchPost);
+
+//Rating
+//Thêm đánh giá
+router.post('/rating/:PostId', jwt.verify, ratingController.createRating);
+
+//Chỉnh sửa đánh giá
+router.put('/rating/:PostId', jwt.verify, ratingController.updateRating);
+
 module.exports = router;

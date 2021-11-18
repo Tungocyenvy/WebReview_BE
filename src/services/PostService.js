@@ -415,6 +415,7 @@ const getPostbyStatus = async (AccountId, Status) => {
   }
 };
 
+//Tìm kiếm bài viết theo Title
 const searchPost = async (req) => {
   const searchField = req.query.keyword;
   console.log(searchField);
