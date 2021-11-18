@@ -217,13 +217,20 @@ const UpdateComment = async (token, body) => {
   let { Content, _id } = body;
   //console.log(_id);
   try {
-    const comment = await Comment.findOne({ _id: _id, AccountId: AccountId });
+    const comment = await Comment.findOne({ _id: _id });
     if (!comment) {
       comment = {};
       return {
         msg: 'Không tìm thấy bình luận',
         statusCode: 300,
         data: { comment },
+      };
+    }
+    console.log(comment);
+    if (comment.AccountId !== AccountId) {
+      return {
+        msg: 'Không được chỉnh sửa bình luận của người khác',
+        statusCode: 300,
       };
     }
     //console.log(comment);
@@ -268,10 +275,17 @@ const UpdateReply = async (token, body) => {
         data: { comment },
       };
     }
+
     var replys = comment.Reply;
 
     for (var i in replys) {
       if (replys[i]._id === _id) {
+        if (replys[i].AccountId !== AccountId) {
+          return {
+            msg: 'Không được chỉnh sửa bình luận của người khác',
+            statusCode: 300,
+          };
+        }
         replys[i].Content = Content;
         replys[i].CreateAt = Date.now();
       }
