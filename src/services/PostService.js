@@ -10,6 +10,14 @@ const getPostId = (GroupId, lstPost) => {
   Id = GroupId + Id;
   return Id;
 };
+
+const removeVN = (Text) => {
+  return Text.normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/đ/g, 'd')
+    .replace(/Đ/g, 'D');
+};
+
 //Lấy rate cho bài viết {Group lọc cho các trang Review,Exp, Forum}
 const getRates = async (Group, AccountId, GroupId) => {
   for (const i in Group) {
@@ -417,7 +425,7 @@ const getPostbyStatus = async (AccountId, Status) => {
 
 //Tìm kiếm bài viết theo Title
 const searchPost = async (req) => {
-  const searchField = req.query.keyword;
+  let searchField = req.query.keyword;
   console.log(searchField);
   try {
     const Status = 'true';
@@ -429,12 +437,13 @@ const searchPost = async (req) => {
       for (const i in data) {
         let temp = data[i].Post;
 
-        //lọc ký tự đặc biệt, hoa thường
+        //lọc ký tự đặc biệt, hoa thường, đưa về không dấu
+        searchField = removeVN(searchField);
         let keyword = new RegExp(
           searchField.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&'),
           'i',
         );
-        let result = temp.filter((x) => x.Title.match(keyword));
+        let result = temp.filter((x) => removeVN(x.Title).match(keyword));
 
         //console.log(result);
         if (result.length > 0) {
