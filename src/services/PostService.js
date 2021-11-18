@@ -361,15 +361,16 @@ const createPost = async (AccountId, body) => {
 };
 
 //Lấy bài viết đã được duyệt hoặc không (Dành cho phần quản lý bài viết)
+//Nếu không truyền AccountId thì dùng cho search
 const getPostbyStatus = async (AccountId, Status) => {
   try {
     console.log('FUNC GET POST BY STATUS');
     const post = await Post.find({});
     const data = post[0].Group;
+    let account = '';
     let lstPost = [];
     if (data) {
-      const account = await Account.findOne({ _id: AccountId });
-      console.log(account);
+      if (AccountId) account = await Account.findOne({ _id: AccountId });
       for (const i in data) {
         let group = data[i].Post;
         if (group) {
@@ -379,7 +380,7 @@ const getPostbyStatus = async (AccountId, Status) => {
           );
           //Nếu account là user thì lọc bài theo account
           if (group.length > 0) {
-            if (!account.IsAdmin) {
+            if (account && !account.IsAdmin) {
               group = group.filter((x) => x.AccountId === AccountId);
             }
             let tmp = { Id: data[i].Id, Post: group };
@@ -418,32 +419,43 @@ const searchPost = async (req) => {
   const searchField = req.query.keyword;
   console.log(searchField);
   try {
-    const post = await Post.find({});
-    const data = post[0].Group;
-    let search = {};
-    let n = 0;
-    for (const i in data) {
-      let temp = data[i].Post;
-      temp = temp.filter((x) => x.Status === true);
-      let result = temp.filter((x) => x.Title.match(searchField));
-      //console.log(result);
-      if (result.length > 0) {
-        search[n] = result;
-        n++;
+    const Status = 'true';
+    const AccountId = '';
+    //Lấy các bài viết đã được duyệt
+    const data = (await getPostbyStatus(AccountId, Status)).data;
+    if (data) {
+      let search = [];
+      for (const i in data) {
+        let temp = data[i].Post;
+
+        //lọc ký tự đặc biệt, hoa thường
+        let keyword = new RegExp(
+          searchField.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&'),
+          'i',
+        );
+        let result = temp.filter((x) => x.Title.match(keyword));
+        //console.log(result);
+        if (result.length > 0) {
+          search.push(result);
+        }
       }
-    }
-    //console.log(search);
-    if (Object.values(search).length === 0) {
+      if (Object.values(search).length === 0) {
+        return {
+          msg: 'Không tìm thấy kết quả nào',
+          statusCode: 300,
+        };
+      }
       return {
-        msg: 'Không tìm thấy kết quả nào',
+        msg: 'Tìm kiếm thành công',
+        statusCode: 200,
+        data: { search },
+      };
+    } else {
+      return {
+        msg: 'Trang web hiện không có bài viết nào',
         statusCode: 300,
       };
     }
-    return {
-      msg: 'Tìm kiếm thành công',
-      statusCode: 200,
-      data: { search },
-    };
   } catch {
     return {
       msg: 'Xảy ra lỗi trong quá trình lấy thông tin',
