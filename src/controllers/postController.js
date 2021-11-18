@@ -98,7 +98,7 @@ const updatePost = async (req, res, next) => {
 };
 
 const getDetailPost = async (req, res, next) => {
-  const TokenID = req.value.body.token;
+  const TokenID = req.value.body.token.data;
   const GroupId = req.params.GroupId;
   const PostId = req.params.PostId;
   const resService = await postService.getDetailPost({
@@ -118,8 +118,23 @@ const getDetailPost = async (req, res, next) => {
 };
 
 const createPost = async (req, res, next) => {
-  const AccountId = req.value.body.token;
+  const AccountId = req.value.body.token.data;
   const resService = await postService.createPost(AccountId, req.body);
+  if (resService.statusCode === 200) {
+    return controller.sendSuccess(
+      res,
+      resService.data,
+      resService.statusCode,
+      resService.msg,
+    );
+  }
+  return controller.sendSuccess(res, {}, resService.statusCode, resService.msg);
+};
+
+const getPostbyStatus = async (req, res, next) => {
+  const AccountId = req.value.body.token.data;
+  const Status = req.params.Status;
+  const resService = await postService.getPostbyStatus(AccountId, Status);
   if (resService.statusCode === 200) {
     return controller.sendSuccess(
       res,
@@ -139,4 +154,5 @@ module.exports = {
   updatePost,
   getDetailPost,
   createPost,
+  getPostbyStatus,
 };

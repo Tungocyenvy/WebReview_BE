@@ -286,7 +286,7 @@ const updatePost = async (body) => {
   }
 };
 
-//Tạo bài viết mới
+//Tạo bài viết
 const createPost = async (AccountId, body) => {
   let { GroupId, Title, Image, Overview, Content, CategoryId } = body;
   try {
@@ -341,7 +341,7 @@ const createPost = async (AccountId, body) => {
         group = group.map((x) => (x.id === GroupId ? data : x));
       }
       await Post.findOneAndUpdate({ _id }, { Group: group });
-      const resave = (await getPost(AccountId)).data;
+      const resave = (await getPostbyStatus(AccountId, 'false')).data;
       console.log(resave);
       if (resave) {
         return {
@@ -355,6 +355,60 @@ const createPost = async (AccountId, body) => {
     console.log(err);
     return {
       msg: 'Lỗi trong quá trình thêm bài viết',
+      statusCode: 300,
+    };
+  }
+};
+
+//Lấy bài viết đã được duyệt hoặc không (Dành cho phần quản lý bài viết)
+const getPostbyStatus = async (AccountId, Status) => {
+  try {
+    console.log('FUNC GET POST BY STATUS');
+    const post = await Post.find({});
+    const data = post[0].Group;
+    let lstPost = [];
+    if (data) {
+      const account = await Account.findOne({ _id: AccountId });
+      console.log(account);
+      for (const i in data) {
+        let group = data[i].Post;
+        if (group) {
+          //Lấy bài viết đã duyệt
+          group = group.filter(
+            (x) => String(x.Status) === Status && x.IsShow === true,
+          );
+          //Nếu account là user thì lọc bài theo account
+          if (group.length > 0) {
+            if (!account.IsAdmin) {
+              group = group.filter((x) => x.AccountId === AccountId);
+            }
+            let tmp = { Id: data[i].Id, Post: group };
+            lstPost.push(tmp);
+          }
+        }
+      }
+      if (lstPost.length <= 0) {
+        return {
+          msg: 'Không có bài viết nào!',
+          statusCode: 300,
+        };
+      } else {
+        return {
+          msg: 'Lấy tất cả bài viết  thành công!',
+          statusCode: 200,
+          data: lstPost,
+        };
+      }
+    } else !data;
+    {
+      return {
+        msg: 'Không có bài viết nào',
+        statusCode: 300,
+      };
+    }
+  } catch {
+    return {
+      msg: 'Xảy ra lỗi trong quá trình lấy thông tin',
       statusCode: 300,
     };
   }
@@ -405,4 +459,5 @@ module.exports = {
   updatePost,
   getDetailPost,
   createPost,
+  getPostbyStatus,
 };
