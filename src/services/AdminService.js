@@ -88,28 +88,27 @@ const UpdateStatusPost = async (body) => {
     //lấy bài viêt
     const posts = await Post.find({});
     const _id = posts[0]._id;
-    const group = posts[0].Group;
+    let group = posts[0].Group;
     console.log(GroupId);
     //loc bai viet theo group
-    const dataGroup = group.filter((e) => e.Id === GroupId);
-    const post = dataGroup[0].Post;
+    const dataGroup = group.find((e) => e.Id === GroupId);
+    //const post = dataGroup[0].Post;
     console.log(PostId);
-    if (post) {
-      //tìm bài viết và đổi status
-      for (const i in post) {
-        if (post[i].Id === PostId) {
-          post[i].Status = true;
-        }
+    if (dataGroup) {
+      let tmp = dataGroup.Post.find((x) => x.Id === PostId);
+      console.log(tmp);
+      if (!tmp) {
+        return {
+          msg: 'Bài viết không tồn tại!',
+          statusCode: 300,
+        };
       }
-
-      dataGroup[0].Post = post;
-      let tmp = dataGroup[0].Post;
-
-      for (const i in group) {
-        if (group[i].Id === GroupId) {
-          group[i].Post = tmp;
-        }
-      }
+      tmp.Status = true;
+      //Đổi status trong post
+      let post = dataGroup.Post;
+      post = post.map((x) => (x.Id === PostId ? tmp : x));
+      dataGroup.Post = post; //Cập nhập vào post
+      group = group.map((x) => (x.Id === GroupId ? dataGroup : x)); //cập nhập vào group
       await Post.findOneAndUpdate({ _id }, { Group: group });
       return {
         msg: 'Duyệt bài viết thành công!',
