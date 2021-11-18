@@ -435,9 +435,21 @@ const searchPost = async (req) => {
           'i',
         );
         let result = temp.filter((x) => x.Title.match(keyword));
+
         //console.log(result);
         if (result.length > 0) {
-          search.push(result);
+          //Trả ra fullname
+          let post = [];
+          for (const i in result) {
+            const accountId = result[i].AccountId;
+            const account = await Account.findOne({ _id: accountId });
+            const FullName = account.FullName;
+            let tmp = { FullName, dataPost: result[i] };
+            post.push(tmp);
+          }
+          let GroupId = data[i].Id;
+          let lstPost = { GroupId, post };
+          search.push(lstPost);
         }
       }
       if (Object.values(search).length === 0) {
