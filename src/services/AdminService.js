@@ -138,13 +138,13 @@ const getDetailPost = async (body) => {
     if (group) {
       group = group.Post;
       //Lấy bài viết
-      let post = group.find((x) => x.Id === PostId);
-      console.log(post);
-      if (post) {
-        const accountId = post.AccountId;
+      let dataPost = group.find((x) => x.Id === PostId);
+      console.log(dataPost);
+      if (dataPost) {
+        const accountId = dataPost.AccountId;
         const account = await Account.findOne({ _id: accountId });
         FullName = account.FullName;
-        let result = { GroupId, FullName, post };
+        let result = { GroupId, FullName, dataPost };
         return {
           msg: 'Lấy thông tin bài viết thành công!',
           statusCode: 200,
