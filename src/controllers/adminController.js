@@ -45,4 +45,19 @@ const updateStatusPost = async (req, res, next) => {
   return controller.sendSuccess(res, {}, resService.statusCode, resService.msg);
 };
 
-module.exports = { getAccount, getPostFalse, updateStatusPost };
+const getDetailPost = async (req, res, next) => {
+  const GroupId = req.params.GroupId;
+  const PostId = req.params.PostId;
+  const resService = await adminService.getDetailPost({ GroupId, PostId });
+  if (resService.statusCode === 200) {
+    return controller.sendSuccess(
+      res,
+      resService.data,
+      resService.statusCode,
+      resService.msg,
+    );
+  }
+  return controller.sendSuccess(res, {}, resService.statusCode, resService.msg);
+};
+
+module.exports = { getAccount, getPostFalse, updateStatusPost, getDetailPost };

@@ -206,7 +206,7 @@ const getPost = async (body) => {
   }
 };
 
-//Lấy chi tiết bài viết
+//Lấy chi tiết bài viết đã duyệt
 const getDetailPost = async (body) => {
   let { AccountId, GroupId, PostId } = body;
   try {
@@ -214,14 +214,16 @@ const getDetailPost = async (body) => {
     let post = (await getPostbyGroupId({ AccountId, GroupId })).data;
     //post = post.data;
     if (post) {
-      let result = post.filter((x) => x.dataPost.Id === PostId);
-
-      if (result.length <= 0) {
+      let tmp = post.filter((x) => x.dataPost.Id === PostId);
+      if (tmp.length <= 0) {
         return {
           msg: 'Không tìm thấy bài viết!',
           statusCode: 300,
         };
       } else {
+        let groupid = { GroupId: GroupId };
+        tmp = tmp.pop();
+        let result = { ...groupid, ...tmp };
         return {
           msg: 'Lấy bài viết ' + PostId + ' thành công!',
           statusCode: 200,

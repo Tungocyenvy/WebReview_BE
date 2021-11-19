@@ -127,4 +127,47 @@ const UpdateStatusPost = async (body) => {
   }
 };
 
-module.exports = { GetAccount, GetPostFalse, UpdateStatusPost };
+//Lấy chi tiết bài viết (dùng cho bài chưa duyệt)
+const getDetailPost = async (body) => {
+  let { GroupId, PostId } = body;
+  try {
+    const lstPost = await Post.find({});
+    const data = lstPost[0].Group;
+
+    let group = data.find((x) => x.Id === GroupId);
+    if (group) {
+      group = group.Post;
+      //Lấy bài viết
+      let post = group.find((x) => x.Id === PostId);
+      console.log(post);
+      if (post) {
+        const accountId = post.AccountId;
+        const account = await Account.findOne({ _id: accountId });
+        FullName = account.FullName;
+        let result = { GroupId, FullName, post };
+        return {
+          msg: 'Lấy thông tin bài viết thành công!',
+          statusCode: 200,
+          data: result,
+        };
+      } else {
+        return {
+          msg: 'Không tìm thấy bài viết!',
+          statusCode: 300,
+        };
+      }
+    } else {
+      return {
+        msg: 'Không có bài viết nào trong group này vui lòng kiểm tra lại!',
+        statusCode: 300,
+      };
+    }
+  } catch {
+    return {
+      msg: 'Xảy ra lỗi trong quá trình lấy thông tin',
+      statusCode: 300,
+    };
+  }
+};
+
+module.exports = { GetAccount, GetPostFalse, UpdateStatusPost, getDetailPost };

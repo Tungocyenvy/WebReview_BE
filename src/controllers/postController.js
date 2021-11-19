@@ -98,11 +98,11 @@ const updatePost = async (req, res, next) => {
 };
 
 const getDetailPost = async (req, res, next) => {
-  const TokenID = req.value.body.token.data;
+  const AccountId = req.value.body.token.data;
   const GroupId = req.params.GroupId;
   const PostId = req.params.PostId;
   const resService = await postService.getDetailPost({
-    TokenID,
+    AccountId,
     GroupId,
     PostId,
   });
