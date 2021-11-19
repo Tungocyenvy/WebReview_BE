@@ -13,4 +13,6 @@ router.put(
 
 router.get('/getPost/:GroupId/:PostId', adminController.getDetailPost);
 
+router.delete('/deletePost/:GroupId/:PostId', adminController.detetePost);
+
 module.exports = router;

@@ -170,4 +170,55 @@ const getDetailPost = async (body) => {
   }
 };
 
-module.exports = { GetAccount, GetPostFalse, UpdateStatusPost, getDetailPost };
+//Lấy chi tiết bài viết (dùng cho bài chưa duyệt)
+const detetePost = async (body) => {
+  let { GroupId, PostId } = body;
+  try {
+    const lstPost = await Post.find({});
+    let data = lstPost[0].Group;
+    const _id = lstPost[0]._id;
+    console.log(data);
+    let group = data.find((x) => x.Id === GroupId);
+    if (group) {
+      let tmp = group.Post;
+      //Lấy bài viết và xóa
+      let index = tmp.findIndex((x) => x.Id === PostId);
+      if (!index) {
+        return {
+          msg: 'Bài viết không tồn tại',
+          statusCode: 300,
+        };
+      }
+      tmp.splice(index, 1);
+
+      //gán lại giá trị vào db
+      group.Post = tmp;
+      //console.log(group);
+      data = data.map((x) => (x.Id === GroupId ? group : x));
+      console.log(data);
+      await Post.findOneAndUpdate({ _id }, { Group: data });
+      return {
+        msg: 'xóa ' + PostId + ' thành công!',
+        statusCode: 200,
+      };
+    } else {
+      return {
+        msg: 'Không có bài viết nào trong group này vui lòng kiểm tra lại!',
+        statusCode: 300,
+      };
+    }
+  } catch {
+    return {
+      msg: 'Xảy ra lỗi trong quá trình xóa',
+      statusCode: 300,
+    };
+  }
+};
+
+module.exports = {
+  GetAccount,
+  GetPostFalse,
+  UpdateStatusPost,
+  getDetailPost,
+  detetePost,
+};
