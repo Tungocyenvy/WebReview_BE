@@ -390,7 +390,7 @@ const getPostbyStatus = async (AccountId, Status) => {
           );
           //Nếu account là user thì lọc bài theo account
           if (group.length > 0) {
-            if (account && !account.IsAdmin) {
+            if (account) {
               group = group.filter((x) => x.AccountId === AccountId);
             }
             let tmp = { Id: data[i].Id, Post: group };
