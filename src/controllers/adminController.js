@@ -13,6 +13,20 @@ const getAccount = async (req, res, next) => {
   return controller.sendSuccess(res, {}, resService.statusCode, resService.msg);
 };
 
+const deleteAccount = async (req, res, next) => {
+  const accountId = req.params.AccountId;
+  const resService = await adminService.DeleteAccount(accountId);
+  if (resService.statusCode === 200) {
+    return controller.sendSuccess(
+      res,
+      resService.data,
+      resService.statusCode,
+      resService.msg,
+    );
+  }
+  return controller.sendSuccess(res, {}, resService.statusCode, resService.msg);
+};
+
 const getPostFalse = async (req, res, next) => {
   const groupId = req.params.GroupId;
   const resService = await adminService.GetPostFalse({ GroupId: groupId });
@@ -77,6 +91,7 @@ const detetePost = async (req, res, next) => {
 
 module.exports = {
   getAccount,
+  deleteAccount,
   getPostFalse,
   updateStatusPost,
   getDetailPost,

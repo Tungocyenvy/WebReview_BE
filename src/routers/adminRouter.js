@@ -3,6 +3,7 @@ const router = express.Router();
 const adminController = require('../controllers/adminController');
 
 router.get('/accounts', adminController.getAccount);
+router.delete('/deleteAccount/:AccountId', adminController.deleteAccount);
 
 router.get('/getPost/:GroupId', adminController.getPostFalse);
 
