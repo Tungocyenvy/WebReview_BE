@@ -152,6 +152,7 @@ const createCategory = async (body) => {
           id = id + randomIndex;
           check = data.Category.find((x) => x.id === id);
         }
+        tmp = { id: id, Name: CateName };
 
         data.Category.push(tmp);
         group = group.map((x) => (x.id === GroupId ? data : x));
