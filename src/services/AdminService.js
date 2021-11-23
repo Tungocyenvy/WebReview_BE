@@ -58,9 +58,24 @@ const DeleteAccount = async (body) => {
     for (const i in rating) {
       let rate = rating[i].Rate;
       let id = rating[i]._id;
+      let PostId = rating[i].PostId;
       for (const k in rate) {
         if (rate[k].AccountId === accountId) {
           rate.splice(k, 1);
+        }
+        console.log(rate.length);
+        if (rate.length === 0) {
+          await Rating.findOneAndDelete({ _id: id });
+        } else {
+          let AvgRate = rate.map((x) => Number(x.Rate)).reduce((a, b) => a + b);
+
+          const count = Object.values(rate).length;
+          AvgRate = Math.round((AvgRate / count) * 10) / 10;
+          console.log(AvgRate);
+          let lstRate = { PostId, Rate: rate, AvgRate };
+          //let rating = { Rates, AvgRate, count };
+          console.log(lstRate);
+          await Rating.findOneAndUpdate({ _id: id }, lstRate);
         }
       }
       await Rating.findOneAndUpdate({ _id: id }, { Rate: rate });
