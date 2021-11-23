@@ -384,7 +384,7 @@ const getPostbyStatus = async (AccountId, Status) => {
       for (const i in data) {
         let group = data[i].Post;
         if (group) {
-          //Lấy bài viết đã duyệt
+          //Lấy bài viết theo status
           group = group.filter(
             (x) => String(x.Status) === Status && x.IsShow === true,
           );

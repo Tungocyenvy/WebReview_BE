@@ -1,5 +1,6 @@
 const Category = require('../models/categoryModel');
 const Group = require('../models/groupModel');
+const Post = require('../models/postModel');
 const PostService = require('./PostService');
 // const GroupService = require('./GroupService');
 
@@ -269,16 +270,18 @@ const updateCategory = async (body, CateId) => {
   }
 };*/
 
-//đổi status category thành false (xóa trên FE)
+//đổi status category thành false ~ xóa cate
+//đổi status category thành true ~ khôi phục cate
 const changeStatusCate = async (body, CateId) => {
-  let { GroupId } = body;
+  let { GroupId, Status } = body;
   console.log(CateId);
   console.log(GroupId);
+  console.log(Status);
   try {
     const category = await Category.find({});
     console.log(category);
     if (category) {
-      const _id = category[0]._id;
+      let _id = category[0]._id;
       let group = category[0].Group;
       let lstGroup = group.find((x) => x.id === GroupId);
 
@@ -299,7 +302,7 @@ const changeStatusCate = async (body, CateId) => {
           statusCode: 300,
         };
       }
-      tmp.Status = false;
+      tmp.Status = Status;
       //Đổi status trong category
       let cate = lstGroup.Category;
       cate = cate.map((x) => (x.id === CateId ? tmp : x));
@@ -308,21 +311,7 @@ const changeStatusCate = async (body, CateId) => {
       await Category.findOneAndUpdate({ _id }, { Group: group });
 
       //Đổi isshow cho post
-      const AccountId = '';
-      const CategoryId = CateId;
-      let Post = (
-        await PostService.getPostbyCategory({ AccountId, GroupId, CategoryId })
-      ).data;
-      console.log(Post);
-      if (Post) {
-        //let lstPost = Post.filter((x) => x.dataPost.CategoryId === CateId);
-        for (const i in Post) {
-          let data = Post[i].dataPost;
-          data.IsShow = false;
-          let PostId = data.Id;
-          await PostService.updatePost({ AccountId, data, GroupId, PostId });
-        }
-      }
+      await recoveryPost({ GroupId, CateId, Status });
 
       const resave = (await getCategory()).data;
       console.log(resave);
@@ -339,6 +328,39 @@ const changeStatusCate = async (body, CateId) => {
       msg: 'Xảy ra lỗi trong quá trình thêm thông tin',
       statusCode: 300,
     };
+  }
+};
+
+//Khôi phục lại bài viết (dùng cho khôi phục group và khôi phục cate)
+const recoveryPost = async (body) => {
+  let { GroupId, CateId, Status } = body;
+  //lấy bài viêt
+  const posts = await Post.find({});
+  const _id = posts[0]._id;
+  let group = posts[0].Group;
+  console.log(GroupId);
+  //loc bai viet theo group
+  const dataGroup = group.find((e) => e.Id === GroupId);
+  //const post = dataGroup[0].Post;
+  console.log(CateId);
+  if (dataGroup) {
+    let lstPost = dataGroup.Post.filter((x) => x.CategoryId === CateId);
+    console.log(lstPost);
+    if (lstPost.length > 0) {
+      {
+        for (const i in lstPost) {
+          tmp = lstPost[i];
+          tmp.IsShow = Status;
+          let PostId = tmp.Id;
+          //Đổi IsShow trong post
+          let post = dataGroup.Post;
+          post = post.map((x) => (x.Id === PostId ? tmp : x));
+          dataGroup.Post = post; //Cập nhập vào post
+          group = group.map((x) => (x.Id === GroupId ? dataGroup : x)); //cập nhập vào group
+          await Post.findOneAndUpdate({ _id }, { Group: group });
+        }
+      }
+    }
   }
 };
 

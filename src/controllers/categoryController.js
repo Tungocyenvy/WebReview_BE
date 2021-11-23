@@ -77,8 +77,8 @@ const updateCategory = async (req, res, next) => {
 
 const changeStatusCate = async (req, res, next) => {
   const CateId = req.params.CateId;
-  const GroupId = req.body;
-  const resService = await categoryService.changeStatusCate(GroupId, CateId);
+  //const GroupId = req.body;
+  const resService = await categoryService.changeStatusCate(req.body, CateId);
   if (resService.statusCode === 200) {
     return controller.sendSuccess(
       res,

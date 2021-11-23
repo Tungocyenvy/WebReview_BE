@@ -61,7 +61,8 @@ const updateGroup = async (req, res, next) => {
 
 const changeStatusGroup = async (req, res, next) => {
   const Id = req.params.Id;
-  const resService = await groupService.changeStatusGroup(Id);
+  const Status = req.body.Status;
+  const resService = await groupService.changeStatusGroup(Status, Id);
   if (resService.statusCode === 200) {
     return controller.sendSuccess(
       res,

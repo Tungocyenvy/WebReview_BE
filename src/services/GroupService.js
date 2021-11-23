@@ -1,4 +1,5 @@
 const Group = require('../models/groupModel');
+const Category = require('../models/categoryModel');
 const categoryService = require('./CategoryService');
 //const Category = require('../models/categoryModel');
 
@@ -76,24 +77,24 @@ const updateGroup = async (Name, Id) => {
 };
 
 //Chỉnh sửa status group thành false ~ xóa group
-const changeStatusGroup = async (Id) => {
+//Chỉnh sửa status group thành true ~ khôi phục lại group
+const changeStatusGroup = async (Status, Id) => {
   try {
     //Lấy Cate theo groupId
     const GroupId = Id;
-    let lstCate = (await categoryService.getCategorybyGroupId({ GroupId }))
-      .data;
-    console.log('lstCate');
+    const category = await Category.find({});
+    let group = category[0].Group;
+    let lstCate = group.find((x) => x.id === GroupId);
     if (lstCate) {
-      // lstCate = lstCate.data
       lstCate = lstCate.Category;
       //Đổi status ở cate
       for (const i in lstCate) {
         let CateId = lstCate[i].id;
-        await categoryService.changeStatusCate({ GroupId }, CateId);
+        await categoryService.changeStatusCate({ GroupId, Status }, CateId);
       }
     }
 
-    await Group.findOneAndUpdate({ _id: Id }, { Status: false });
+    await Group.findOneAndUpdate({ _id: Id }, { Status: Status });
 
     const data = (await getGroup()).data;
     if (data) {
