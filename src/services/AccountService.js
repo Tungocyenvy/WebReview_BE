@@ -76,6 +76,7 @@ const SigninService = async (body) => {
       if (result) {
         const id = data._id;
         const token = createToken(id);
+        const Reset = data.Reset;
         //const token = data.Token;
         return {
           msg: 'Đăng nhập thành công!',
@@ -83,6 +84,7 @@ const SigninService = async (body) => {
           data: {
             Token: token,
             IsAdmin: data.IsAdmin,
+            Reset,
           },
         };
       } else {
@@ -116,6 +118,7 @@ const ForgetPasswordService = async (body) => {
       const saltOrRound = 8;
       const hassPassword = await bcrypt.hash(random, saltOrRound);
       account.PassWord = hassPassword;
+      account.Reset = true;
       await account.save();
       const resMail = SendMailVetify(
         Email,
@@ -151,6 +154,7 @@ const ChangePasswordService = async (IDToken, body) => {
         const saltOrRound = 8;
         const HashNewPassword = await bcrypt.hash(NewPassword, saltOrRound);
         account.PassWord = HashNewPassword;
+        account.Reset = false;
         await account.save();
         return {
           msg: 'Đổi mật khẩu thành công!',
