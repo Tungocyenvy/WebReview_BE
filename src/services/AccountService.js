@@ -77,6 +77,17 @@ const SigninService = async (body) => {
         const id = data._id;
         const token = createToken(id);
         const Reset = data.Reset;
+        if (Reset) {
+          return {
+            msg: 'Vui lòng đổi mật khẩu mới trước khi sử dụng!',
+            statusCode: 200,
+            data: {
+              Token: token,
+              IsAdmin: data.IsAdmin,
+              Reset,
+            },
+          };
+        }
         //const token = data.Token;
         return {
           msg: 'Đăng nhập thành công!',
