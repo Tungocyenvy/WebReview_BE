@@ -27,11 +27,11 @@ const getCateId = (CateName) => {
 
 //Lấy cate theo từng trang
 const getCategorybyGroupId = async (body) => {
-  let { GroupId } = body;
+  let { GroupId, Status } = body;
   //const Id = 'Review';
   try {
     console.log('FUNC GET CATEGORY BY GROUP ID');
-    const category = (await getCategory()).data;
+    const category = (await getCategory(Status)).data;
     if (category) {
       let post = category.find((x) => x.id === GroupId);
       console.log(post);
@@ -64,7 +64,9 @@ const getCategorybyGroupId = async (body) => {
 };
 
 //Lấy cate cho tất cả các trang {admin}
-const getCategory = async () => {
+//Status false lấy dành cho khôi phục
+//true lấy category hiện có
+const getCategory = async (Status) => {
   //const Id = 'Review';
   console.log('getCategory');
   try {
@@ -80,7 +82,7 @@ const getCategory = async () => {
           //let group = await Group.findOne({ _id: data[i].id });
           if (group) {
             let lstCate = data[i].Category;
-            lstCate = lstCate.filter((x) => x.Status === true);
+            lstCate = lstCate.filter((x) => String(x.Status) === Status);
             if (lstCate) {
               let cate = {};
               cate.id = data[i].id;
@@ -159,7 +161,7 @@ const createCategory = async (body) => {
         group = group.map((x) => (x.id === GroupId ? data : x));
       }
       await Category.findOneAndUpdate({ _id }, { Group: group });
-      const resave = (await getCategory()).data;
+      const resave = (await getCategory('true')).data;
       console.log(resave);
       if (resave) {
         return {
@@ -203,7 +205,7 @@ const updateCategory = async (body, CateId) => {
       data.Category = cate;
       group = group.map((x) => (x.id === GroupId ? data : x));
       await Category.findOneAndUpdate({ _id }, { Group: group });
-      const resave = (await getCategory()).data;
+      const resave = (await getCategory('true')).data;
       console.log(resave);
       if (resave) {
         return {
@@ -313,11 +315,21 @@ const changeStatusCate = async (body, CateId) => {
       //Đổi isshow cho post
       await recoveryPost({ GroupId, CateId, Status });
 
-      const resave = (await getCategory()).data;
+      let message = 'Xóa category ' + CateId + ' thành công!';
+
+      if (String(Status) === 'true') {
+        message = 'Khôi phục category ' + CateId + ' thành công!';
+        Status = 'false';
+      } else {
+        Status = 'true';
+      }
+      //Status!=Status;
+      console.log(Status);
+      const resave = (await getCategory(Status)).data;
       console.log(resave);
       if (resave) {
         return {
-          msg: 'Xóa category ' + CateId + ' thành công!',
+          msg: message,
           statusCode: 200,
           data: resave,
         };

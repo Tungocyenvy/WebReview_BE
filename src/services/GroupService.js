@@ -4,9 +4,9 @@ const categoryService = require('./CategoryService');
 //const Category = require('../models/categoryModel');
 
 //Lấy cate cho tất cả các trang {admin}
-const getGroup = async () => {
+const getGroup = async (Status) => {
   try {
-    const group = await Group.find({ Status: true });
+    const group = await Group.find({ Status: Status });
     return {
       msg: 'Lấy tất cả group thành công!',
       statusCode: 200,
@@ -59,7 +59,8 @@ const createGroup = async (body) => {
 const updateGroup = async (Name, Id) => {
   try {
     await Group.findOneAndUpdate({ _id: Id }, Name);
-    const data = (await getGroup()).data;
+    const Status = true;
+    const data = (await getGroup(Status)).data;
     console.log(data);
     if (data) {
       return {
@@ -96,10 +97,18 @@ const changeStatusGroup = async (Status, Id) => {
 
     await Group.findOneAndUpdate({ _id: Id }, { Status: Status });
 
-    const data = (await getGroup()).data;
+    let message = 'Xóa Group ' + Id + ' thành công!';
+
+    if (String(Status) === 'true') {
+      message = 'Khôi phục Group ' + Id + ' thành công!';
+    }
+    //Xóa group thì đang ở gruop đã duyệt
+    //Khôi phục thì đang ở group đã xóa
+    Status != Status;
+    let data = (await getGroup(Status)).data;
     if (data) {
       return {
-        msg: 'Xóa Group ' + Id + ' thành công!',
+        msg: message,
         statusCode: 200,
         data: data,
       };

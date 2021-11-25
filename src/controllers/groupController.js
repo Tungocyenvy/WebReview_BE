@@ -19,7 +19,8 @@ const groupService = require('../services/GroupService');
 // };
 
 const getGroup = async (req, res, next) => {
-  const resService = await groupService.getGroup();
+  const Status = req.params.Status;
+  const resService = await groupService.getGroup(Status);
   if (resService.statusCode === 200) {
     return controller.sendSuccess(
       res,

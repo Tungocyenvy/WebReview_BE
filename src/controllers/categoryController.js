@@ -4,8 +4,10 @@ const categoryService = require('../services/CategoryService');
 //Lấy bài viết theo loại
 const getCategorybyGroupId = async (req, res, next) => {
   const GroupId = req.params.GroupId;
+  const Status = req.params.Status;
   const resService = await categoryService.getCategorybyGroupId({
     GroupId,
+    Status,
   });
   if (resService.statusCode === 200) {
     return controller.sendSuccess(
@@ -20,7 +22,8 @@ const getCategorybyGroupId = async (req, res, next) => {
 
 //Lấy tất cả bài viết
 const getCategory = async (req, res, next) => {
-  const resService = await categoryService.getCategory();
+  const Status = req.params.Status;
+  const resService = await categoryService.getCategory(Status);
   if (resService.statusCode === 200) {
     return controller.sendSuccess(
       res,

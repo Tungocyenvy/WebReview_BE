@@ -4,7 +4,7 @@ const groupController = require('../controllers/groupController');
 const validate = require('../middleware/validator/index');
 const groupValidate = require('../middleware/validator/groupValidate');
 
-router.get('/getGroup', groupController.getGroup);
+router.get('/getGroup/:Status', groupController.getGroup);
 router.post(
   '/createGroup',
   validate.validateBody(groupValidate.create),

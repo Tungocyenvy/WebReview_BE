@@ -5,9 +5,12 @@ const validate = require('../middleware/validator/index');
 const categoryValidate = require('../middleware/validator/categoryValidate');
 
 //GroupId={RV, EXP, Forum}
-router.get('/getCategory/:GroupId', categoryController.getCategorybyGroupId);
+router.get(
+  '/getCategory/:Status/:GroupId',
+  categoryController.getCategorybyGroupId,
+);
 
-router.get('/getCategory', categoryController.getCategory);
+router.get('/getCategory/:Status', categoryController.getCategory);
 
 router.post(
   '/createCategory',
