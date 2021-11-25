@@ -77,11 +77,10 @@ const updatePost = async (req, res, next) => {
   // const TokenID = req.value.body.token?.data;
   const GroupId = req.params.GroupId;
   const PostId = req.params.PostId;
-  const AccountId = req.value.body.token.data;
+  //const AccountId = req.value.body.token.data;
   const data = req.body;
   //const { token, ...data } = req.value.body;
   const resService = await postService.updatePost({
-    AccountId,
     data,
     GroupId,
     PostId,

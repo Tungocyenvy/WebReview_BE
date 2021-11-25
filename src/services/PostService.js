@@ -246,7 +246,7 @@ const getDetailPost = async (body) => {
 
 //Chỉnh sửa bài viết
 const updatePost = async (body) => {
-  let { AccountId, data, GroupId, PostId } = body;
+  let { data, GroupId, PostId } = body;
   //
   try {
     //Lấy bài viết
@@ -255,33 +255,22 @@ const updatePost = async (body) => {
     let group = lstPost[0].Group;
 
     //Lọc bài viết theo group
-    let post = (await getPostbyGroupId({ AccountId, GroupId })).data;
+    let post = group.find((x) => x.Id === GroupId);
     if (post) {
-      let tmp = [];
-
-      //Lấy data của bài viết
-      for (const i in post) {
-        tmp.push(post[i].dataPost);
-      }
-
+      post = post.Post;
       //Cập nhập data bài viết mới
-      tmp = tmp.map((x) => (x.Id === PostId ? data : x));
+      post = post.map((x) => (x.Id === PostId ? data : x));
 
       //Cập nhật data của cả group
-      let postMap = { Id: GroupId, Post: tmp };
+      let postMap = { Id: GroupId, Post: post };
       group = group.map((x) => (x.Id === GroupId ? postMap : x));
 
       //cập nhập vào collection Post
       await Post.findOneAndUpdate({ _id }, { Group: group });
-      const res = (await getDetailPost({ AccountId, GroupId, PostId })).data;
-
-      if (res) {
-        return {
-          msg: 'Update bài viết thành công!',
-          statusCode: 200,
-          data: { res },
-        };
-      }
+      return {
+        msg: 'Update bài viết thành công!',
+        statusCode: 200,
+      };
     } else {
       return {
         msg: 'Không có bài viết nào trong group này vui lòng kiểm tra lại thông tin!',
