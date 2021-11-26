@@ -268,7 +268,7 @@ const updatePost = async (body) => {
       //cập nhập vào collection Post
       await Post.findOneAndUpdate({ _id }, { Group: group });
       return {
-        msg: 'Update bài viết thành công!',
+        msg: 'Chỉnh sửa bài viết thành công!',
         statusCode: 200,
       };
     } else {

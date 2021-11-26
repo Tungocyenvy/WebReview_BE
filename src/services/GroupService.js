@@ -26,10 +26,17 @@ const createGroup = async (body) => {
   let { Id, Name } = body;
   try {
     const group = await Group.findOne({ _id: Id });
+    const name = await Group.findOne({ Name });
     //const check = group.findOne({_id:Id});
     if (group) {
       return {
         msg: 'GroupId đã tồn tại!',
+        statusCode: 300,
+      };
+    }
+    if (name) {
+      return {
+        msg: 'Tên nhóm đã tồn tại!',
         statusCode: 300,
       };
     }
@@ -41,7 +48,7 @@ const createGroup = async (body) => {
     console.log(resave);
     if (resave) {
       return {
-        msg: 'Thêm group thành công!',
+        msg: 'Thêm nhóm thành công!',
         statusCode: 200,
         data: resave,
       };
@@ -58,13 +65,21 @@ const createGroup = async (body) => {
 //Sửa group
 const updateGroup = async (Name, Id) => {
   try {
+    const name = await Group.findOne(Name);
+
+    if (name) {
+      return {
+        msg: 'Tên nhóm đã tồn tại!',
+        statusCode: 300,
+      };
+    }
     await Group.findOneAndUpdate({ _id: Id }, Name);
     const Status = true;
     const data = (await getGroup(Status)).data;
     console.log(data);
     if (data) {
       return {
-        msg: 'Chỉnh sửa Group ' + Id + ' thành công!',
+        msg: 'Chỉnh sửa nhóm ' + Id + ' thành công!',
         statusCode: 200,
         data: data,
       };
@@ -97,10 +112,10 @@ const changeStatusGroup = async (Status, Id) => {
 
     await Group.findOneAndUpdate({ _id: Id }, { Status: Status });
 
-    let message = 'Xóa Group ' + Id + ' thành công!';
+    let message = 'Xóa nhóm ' + Id + ' thành công!';
 
     if (String(Status) === 'true') {
-      message = 'Khôi phục Group ' + Id + ' thành công!';
+      message = 'Khôi phục nhóm ' + Id + ' thành công!';
     }
     //Xóa group thì đang ở gruop đã duyệt
     //Khôi phục thì đang ở group đã xóa

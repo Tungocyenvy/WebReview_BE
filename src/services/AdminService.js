@@ -9,7 +9,7 @@ const GetAccount = async () => {
     const accounts = await Account.find({ IsAdmin: false });
     if (!accounts) {
       return {
-        msg: 'Không có account nào!',
+        msg: 'Không có người dùng nào!',
         statusCode: 300,
       };
     }

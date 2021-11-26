@@ -148,6 +148,13 @@ const createCategory = async (body) => {
       }
       //Group đã có category rồi
       else {
+        if (data.Category.find((x) => x.Name === CateName)) {
+          return {
+            msg: 'Tên danh mục này đã tồn tại!',
+            statusCode: 300,
+          };
+        }
+
         //check id có trùng hay không
         let check = data.Category.find((x) => x.id === id);
         while (check) {
@@ -165,7 +172,7 @@ const createCategory = async (body) => {
       console.log(resave);
       if (resave) {
         return {
-          msg: 'Thêm category thành công!',
+          msg: 'Thêm danh mục thành công!',
           statusCode: 200,
           data: resave,
         };
@@ -201,6 +208,12 @@ const updateCategory = async (body, CateId) => {
       let tmp = { id: CateId, Name: CateName };
 
       let cate = data.Category;
+      if (cate.find((x) => x.Name === CateName)) {
+        return {
+          msg: 'Tên danh mục này đã tồn tại!',
+          statusCode: 300,
+        };
+      }
       cate = cate.map((x) => (x.id === CateId ? tmp : x));
       data.Category = cate;
       group = group.map((x) => (x.id === GroupId ? data : x));
@@ -209,7 +222,7 @@ const updateCategory = async (body, CateId) => {
       console.log(resave);
       if (resave) {
         return {
-          msg: 'Chỉnh sửa category ' + CateId + ' thành công!',
+          msg: 'Chỉnh sửa danh mục ' + CateId + ' thành công!',
           statusCode: 200,
           data: resave,
         };
@@ -276,9 +289,6 @@ const updateCategory = async (body, CateId) => {
 //đổi status category thành true ~ khôi phục cate
 const changeStatusCate = async (body, CateId) => {
   let { GroupId, Status } = body;
-  console.log(CateId);
-  console.log(GroupId);
-  console.log(Status);
   try {
     const category = await Category.find({});
     console.log(category);
@@ -300,7 +310,7 @@ const changeStatusCate = async (body, CateId) => {
       console.log(tmp);
       if (!tmp) {
         return {
-          msg: 'Category không tồn tại!',
+          msg: 'danh mục không tồn tại!',
           statusCode: 300,
         };
       }
@@ -315,10 +325,10 @@ const changeStatusCate = async (body, CateId) => {
       //Đổi isshow cho post
       await recoveryPost({ GroupId, CateId, Status });
 
-      let message = 'Xóa category ' + CateId + ' thành công!';
+      let message = 'Xóa danh mục ' + CateId + ' thành công!';
 
       if (String(Status) === 'true') {
-        message = 'Khôi phục category ' + CateId + ' thành công!';
+        message = 'Khôi phục danh mục ' + CateId + ' thành công!';
         Status = 'false';
       } else {
         Status = 'true';
