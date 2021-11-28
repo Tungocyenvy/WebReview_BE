@@ -43,6 +43,7 @@ const GetComment = async (body) => {
       const account = await Account.findOne({ _id: accountId });
       let avatar = account.Avatar;
       let FullName = account.FullName;
+      let Email = account.Email;
 
       var replys = data.Reply;
       //console.log(replys);
@@ -60,6 +61,7 @@ const GetComment = async (body) => {
         objReply._id = reply._id;
         objReply.Avatar = avatar1;
         objReply.FullName = account1.FullName;
+        objReply.Email = account1.Email;
         objReply.Content = reply.Content;
         objReply.CreateAt = reply.CreateAt;
 
@@ -75,6 +77,7 @@ const GetComment = async (body) => {
       dataCmt._id = data._id;
       dataCmt.Avatar = avatar;
       dataCmt.FullName = FullName;
+      dataCmt.Email = Email;
       dataCmt.Content = data.Content;
       dataCmt.CreateAt = data.CreateAt;
       dataCmt.Reply = result;
@@ -323,7 +326,8 @@ const DeleteComment = async (token, idComment) => {
         data: { comment },
       };
     }
-    if (comment.AccountId !== AccountId) {
+    const account = await Account.findOne({ _id: AccountId });
+    if (comment.AccountId !== AccountId && !account.IsAdmin) {
       return {
         msg: 'Tài khoản không có quyền xóa bình luận này',
         statusCode: 300,
@@ -353,6 +357,7 @@ const DeleteReply = async (token, idCmt, idReply) => {
   console.log(_id);
   try {
     const comment = await Comment.findOne({ _id: idComment });
+    const account = await Account.findOne({ _id: AccountId });
     console.log(comment);
     if (!comment) {
       comment = {};
@@ -366,7 +371,7 @@ const DeleteReply = async (token, idCmt, idReply) => {
     console.log(replys);
     for (var i = 0; i < replys.length; i++) {
       if (replys[i]._id === _id) {
-        if (replys[i].AccountId !== AccountId) {
+        if (replys[i].AccountId !== AccountId && !account.IsAdmin) {
           return {
             msg: 'Tài khoản không có quyền xóa bình luận này',
             statusCode: 300,
