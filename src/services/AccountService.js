@@ -8,45 +8,50 @@ const { SendMailVetify } = require('./SendMailService');
 const SignupService = async (body) => {
   let { UserName, PassWord, Email, FullName, DOB, Address } = body;
   try {
-    const result = await Account.find({ Email });
+    const result = await Account.findOne({ Email });
+    const username = await Account.findOne({ UserName });
     if (result) {
-      if (result.length > 0) {
-        //checkemail
-        return {
-          msg: 'Email này đã tồn tại!',
-          statusCode: 300,
-        };
-      } else {
-        const saltOrRound = 8;
-        const hassPassword = await bcrypt.hash(PassWord, saltOrRound);
-        const newAccount = new Account({
-          UserName,
-          PassWord: hassPassword,
-          Email,
-          Type: 'Defaul',
-          FullName,
-          DOB,
-          Address,
-          IsAdmin: false,
-          Avatar:
-            'https://res.cloudinary.com/blogreview/image/upload/v1636626365/review_web/hzshd4vahy6hw6m0a9p5.png',
-        });
-        console.log('newAccount', newAccount);
-        const resSave = await newAccount.save();
-        if (resSave) {
-          const DataUser = resSave.Token;
-          return {
-            msg: 'Đăng ký thành công',
-            statusCode: 200,
-            data: DataUser,
-          };
-        } else {
-          return {
-            msg: 'Lỗi! Không thể thêm tài khoản',
-            statusCode: 300,
-          };
-        }
-      }
+      //checkemail
+      return {
+        msg: 'Email này đã tồn tại!',
+        statusCode: 300,
+      };
+    }
+    if (username) {
+      //checkusername
+      return {
+        msg: 'Username này đã tồn tại',
+        statusCode: 300,
+      };
+    }
+    const saltOrRound = 8;
+    const hassPassword = await bcrypt.hash(PassWord, saltOrRound);
+    const newAccount = new Account({
+      UserName,
+      PassWord: hassPassword,
+      Email,
+      Type: 'Defaul',
+      FullName,
+      DOB,
+      Address,
+      IsAdmin: false,
+      Avatar:
+        'https://res.cloudinary.com/blogreview/image/upload/v1636626365/review_web/hzshd4vahy6hw6m0a9p5.png',
+    });
+    console.log('newAccount', newAccount);
+    const resSave = await newAccount.save();
+    if (resSave) {
+      const DataUser = resSave.Token;
+      return {
+        msg: 'Đăng ký thành công',
+        statusCode: 200,
+        data: DataUser,
+      };
+    } else {
+      return {
+        msg: 'Lỗi! Không thể thêm tài khoản',
+        statusCode: 300,
+      };
     }
   } catch (err) {
     console.log(err);
@@ -218,8 +223,21 @@ const getUserDataService = async (body) => {
 };
 
 const UpdateUserService = async (AccountId, body) => {
+  let { Email } = body;
   try {
     console.log(AccountId);
+    const result = await Account.findOne({ Email: Email });
+    console.log(result);
+    if (result) {
+      const id = String(result._id);
+      if (id !== AccountId) {
+        //checkemail
+        return {
+          msg: 'Email này đã tồn tại!',
+          statusCode: 300,
+        };
+      }
+    }
     await Account.findOneAndUpdate({ _id: AccountId }, body);
     const res = await Account.findOne({ _id: AccountId });
     console.log(res);

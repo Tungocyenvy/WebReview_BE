@@ -269,13 +269,15 @@ const detetePost = async (body) => {
     if (group) {
       let tmp = group.Post;
       //Lấy bài viết và xóa
-      let index = tmp.findIndex((x) => x.Id === PostId);
-      if (!index) {
+      let index = -1;
+      index = tmp.findIndex((x) => x.Id === PostId);
+      if (index === -1) {
         return {
           msg: 'Bài viết không tồn tại',
           statusCode: 300,
         };
       }
+
       tmp.splice(index, 1);
 
       //gán lại giá trị vào db
