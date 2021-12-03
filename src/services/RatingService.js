@@ -2,7 +2,7 @@ const Rating = require('../models/ratingModel');
 const Account = require('../models/accountModel');
 
 //REVIEW
-// get Post review
+// Lấy đánh giá cho từng bài viết
 const getRating = async (PostId, AccountId) => {
   try {
     let rate = await Rating.findOne({ PostId });

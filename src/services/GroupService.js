@@ -3,7 +3,7 @@ const Category = require('../models/categoryModel');
 const categoryService = require('./CategoryService');
 //const Category = require('../models/categoryModel');
 
-//Lấy cate cho tất cả các trang {admin}
+//Lấy tất cả các group hiện có {admin}
 const getGroup = async (Status) => {
   try {
     const group = await Group.find({ Status: Status });

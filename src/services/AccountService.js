@@ -148,12 +148,15 @@ const ForgetPasswordService = async (body) => {
       };
     } else {
       return {
-        msg: 'Lấy mật khẩu mới không thành công',
+        msg: 'Email không chính xác vui lòng kiểm tra lại email',
         statusCode: 300,
       };
     }
   } catch (err) {
-    console.log(err);
+    return {
+      msg: 'Lỗi trong quá trình lấy lại mật khẩu',
+      statusCode: 300,
+    };
   }
 };
 
