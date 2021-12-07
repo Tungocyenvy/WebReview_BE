@@ -2,7 +2,10 @@ var nodemailer = require('nodemailer');
 
 var transporter = nodemailer.createTransport({
   // Đây là bước cấu hình
-  service: 'gmail',
+  //service: 'gmail',
+  host: process.env.GMAIL_HOST,
+  port: process.env.GMAIL_PORT,
+  secure: false,
   auth: {
     user: process.env.GMAIL_SENDER_TK,
     pass: process.env.GMAIL_SENDER_PASS,

@@ -257,7 +257,7 @@ const getDetailPost = async (body) => {
   }
 };
 
-//Lấy chi tiết bài viết (dùng cho bài chưa duyệt)
+//Xóa bài viết
 const detetePost = async (body) => {
   let { GroupId, PostId } = body;
   try {
