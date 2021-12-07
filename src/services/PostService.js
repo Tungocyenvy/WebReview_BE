@@ -191,7 +191,7 @@ const getPost = async (body) => {
     //Lấy ra 5 bài trong forum mới nhất
     let topfrm = Array.from(forum);
     topfrm.reverse();
-    topfrm = topfrm.slice(0, 6);
+    topfrm = topfrm.slice(0, 4);
 
     return {
       msg: 'Lấy tất cả bài viết thành công!',
