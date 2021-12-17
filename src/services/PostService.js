@@ -210,7 +210,7 @@ const getPost = async (body) => {
 const getDetailPost = async (body) => {
   let { AccountId, GroupId, PostId } = body;
   try {
-    //Lấy bài theo group
+    //Lấy bài theo group (bài viết đã duyệt)
     let post = (await getPostbyGroupId({ AccountId, GroupId })).data;
     //post = post.data;
     if (post) {
@@ -476,6 +476,38 @@ const searchPost = async (req) => {
     };
   }
 };
+
+// //Lấy chi tiết bài viết đã duyệt
+// const getDetailPost = async (body) => {
+//   let { AccountId, GroupId, PostId } = body;
+//   //Lấy bài theo group (bài viết đã duyệt)
+//   let post = (await getPostbyGroupId({ AccountId, GroupId })).data;
+//   //post = post.data;
+//   if (post) {
+//     let tmp = post.filter((x) => x.dataPost.Id === PostId);
+//     if (tmp.length <= 0) {
+//       return {
+//         msg: 'Không tìm thấy bài viết!',
+//         statusCode: 300,
+//       };
+//     } else {
+//       let groupid = { GroupId: GroupId };
+//       tmp = tmp.pop();
+//       let result = { ...groupid, ...tmp };
+//       return {
+//         msg: 'Lấy bài viết ' + PostId + ' thành công!',
+//         statusCode: 200,
+//         data: result,
+//       };
+//     }
+//   } else {
+//     return {
+//       msg: 'Không có bài viết nào của group này!',
+//       statusCode: 300,
+//     };
+//   }
+// };
+
 module.exports = {
   getPost,
   getPostbyGroupId,

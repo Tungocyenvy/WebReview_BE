@@ -33,25 +33,22 @@ const getCategorybyGroupId = async (body) => {
     console.log('FUNC GET CATEGORY BY GROUP ID');
     const category = (await getCategory(Status)).data;
     if (category) {
-      let post = category.find((x) => x.id === GroupId);
-      console.log(post);
-      if (post) {
-        console.log(1);
+      let lstCate = category.find((x) => x.id === GroupId);
+      if (lstCate.length > 0) {
         return {
-          msg: 'Lấy tất cả category của ' + GroupId + ' thành công!',
+          msg: 'Lấy tất cả danh mục của ' + GroupId + ' thành công!',
           statusCode: 200,
-          data: post,
+          data: lstCate,
         };
       } else {
-        console.log(0);
         return {
-          msg: 'Không có category nào trong group!',
+          msg: 'Không có danh mục nào trong group!',
           statusCode: 300,
         };
       }
     } else {
       return {
-        msg: 'Không có category nào!',
+        msg: 'Không có danh mục nào!',
         statusCode: 300,
       };
     }
@@ -95,12 +92,12 @@ const getCategory = async (Status) => {
         console.log(Result);
         if (!Result) {
           return {
-            msg: 'Không có category nào!',
+            msg: 'Không có danh mục nào!',
             statusCode: 300,
           };
         } else {
           return {
-            msg: 'Lấy tất cả category thành công!',
+            msg: 'Lấy tất cả danh mục thành công!',
             statusCode: 200,
             data: Result,
           };
@@ -108,7 +105,7 @@ const getCategory = async (Status) => {
       }
     } else {
       return {
-        msg: 'Không có category nào!',
+        msg: 'Không có danh mục nào!',
         statusCode: 300,
       };
     }
