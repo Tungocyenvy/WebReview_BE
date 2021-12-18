@@ -34,7 +34,8 @@ const getCategorybyGroupId = async (body) => {
     const category = (await getCategory(Status)).data;
     if (category) {
       let lstCate = category.find((x) => x.id === GroupId);
-      if (lstCate.length > 0) {
+      console.log(lstCate);
+      if (lstCate.Category.length > 0) {
         return {
           msg: 'Lấy tất cả danh mục của ' + GroupId + ' thành công!',
           statusCode: 200,
