@@ -73,8 +73,15 @@ const SigninService = async (body) => {
   if (data == null) {
     data = await Account.findOne({ UserName });
   }
+
   console.log(data);
   if (data != null) {
+    if (data.IsDelete) {
+      return {
+        msg: 'Tài khoản bị vô hiệu hóa!',
+        statusCode: 300,
+      };
+    }
     const hashPassword = data.PassWord;
     const result = await bcrypt.compare(PassWord, hashPassword);
     try {

@@ -12,6 +12,7 @@ const AccountSchema = new schema({
   IsAdmin: { type: Boolean, require: true },
   Avatar: { type: String, require: true },
   Reset: { type: Boolean, default: false },
+  IsDelete: { type: Boolean, default: false },
 });
 
 const Account = mongoose.model('Account', AccountSchema);
