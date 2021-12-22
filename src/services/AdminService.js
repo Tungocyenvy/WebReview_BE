@@ -30,80 +30,7 @@ const GetAccount = async () => {
 const DeleteAccount = async (body) => {
   let accountId = body;
   try {
-    // xóa post của user  và rating của post
-    // const posts = await Post.find({});
-    // const data = posts[0].Group;
-    // const _id = posts[0]._id;
-    //console.log(data);
-    // const post = data[0].Post;
-    // let index = post.findIndex((x) => {return  x.Id === 'RV1'});
-    // console.log(index);
-    // for (const i in data) {
-    //   let post = data[i].Post;
-    //   for (var k = 0; k < post.length; k++) {
-    //     if (post[k].AccountId === accountId) {
-    //       const postId = post[k].Id;
-    //       await Rating.findOneAndDelete({ PostId: postId });
-    //       post.splice(k, 1);
-    //       k--;
-    //     }
-    //   }
-    //   data[i].Post = post;
-    // }
-    // posts[0].Group = data;
-    // let tmp = posts[0].Group;
-    // await Post.findOneAndUpdate({ _id }, { Group: tmp });
-
-    // //xóa rating của account
-    // const rating = await Rating.find({});
-    // for (const i in rating) {
-    //   let rate = rating[i].Rate;
-    //   let id = rating[i]._id;
-    //   let PostId = rating[i].PostId;
-    //   for (const k in rate) {
-    //     if (rate[k].AccountId === accountId) {
-    //       rate.splice(k, 1);
-    //     }
-    //     console.log(rate.length);
-    //     if (rate.length === 0) {
-    //       await Rating.findOneAndDelete({ _id: id });
-    //     } else {
-    //       let AvgRate = rate.map((x) => Number(x.Rate)).reduce((a, b) => a + b);
-
-    //       const count = Object.values(rate).length;
-    //       AvgRate = Math.round((AvgRate / count) * 10) / 10;
-    //       console.log(AvgRate);
-    //       let lstRate = { PostId, Rate: rate, AvgRate };
-    //       //let rating = { Rates, AvgRate, count };
-    //       console.log(lstRate);
-    //       await Rating.findOneAndUpdate({ _id: id }, lstRate);
-    //     }
-    //   }
-    //   await Rating.findOneAndUpdate({ _id: id }, { Rate: rate });
-    // }
-    // //xóa cmt
-    // const comment = await Comment.find({});
-    // for (const i in comment) {
-    //   await Comment.findOneAndDelete({ AccountId: accountId });
-    // }
-    // //xóa reply
-    // for (const i in comment) {
-    //   let replys = comment[i].Reply;
-    //   let id = comment[i]._id;
-    //   //console.log(replys)
-    //   for (var k = 0; k < replys.length; k++) {
-    //     if (replys[k].AccountId === accountId) {
-    //       //console.log(k);
-    //       replys.splice(k, 1);
-    //       k--;
-    //     }
-    //   }
-    //   comment[i].Replys = replys;
-    //   await Comment.findOneAndUpdate({ _id: id }, { Reply: replys });
-    // }
-    // await Account.findOneAndDelete({ _id: accountId });
     await Account.findOneAndUpdate({ _id: accountId }, { IsDelete: true });
-
     return {
       msg: 'Xóa tài khoản thành công',
       statusCode: 200,
@@ -307,6 +234,81 @@ const detetePost = async (body) => {
   }
 };
 
+//Quản lý Comment
+const getComment = async (body) => {
+  try {
+    console.log('Lay cmt');
+    const post = await Post.find({});
+    const listGroup = post[0].Group; //Group
+    let result = [];
+    for (var item in listGroup) {
+      //object
+      let listPost = listGroup[item];
+      let groupId = listPost.groupId; //id : object
+      let data = listPost.Post;
+      let dataPost = [];
+      for (var k in data) {
+        let postId = data[k].Id;
+        let postTilte = data[k].Title;
+        let lstcomment = await Comment.find({ PostId: postId });
+        let rs = [];
+        if (lstcomment) {
+          for (var item in lstcomment) {
+            const comment = lstcomment[item];
+            const cmtId = comment._id;
+            const accountId = comment.AccountId;
+            const account = await Account.findOne({ _id: accountId });
+            let FullName = account.FullName;
+            let cmtContent = comment.Content;
+            let dataCmt = {
+              cmtId,
+              FullName,
+              Content: cmtContent,
+              IsReply: false,
+            };
+            rs.push(dataCmt);
+            var replys = comment.Reply;
+            //let result = [];
+            for (var k in replys) {
+              const reply = replys[k];
+              const accountId1 = reply.AccountId; //nhớ sưa chữ email lại nha :v
+              const account1 = await Account.findOne({ _id: accountId1 });
+              FullName = account1.FullName;
+              rplContent = reply.Content;
+              rplId = reply._id;
+              dataCmt = {
+                cmtId,
+                FullName,
+                Content: rplContent,
+                IsReply: true,
+                replyId: rplId,
+              };
+              rs.push(dataCmt);
+            }
+          }
+        }
+        let datatmp = { Tilte: postTilte, Comment: rs };
+        dataPost.push(datatmp);
+        console.log('dataPost');
+        console.log(dataPost);
+      }
+      let tmp = { groupId, data: dataPost };
+      result.push(tmp);
+    }
+    console.log(result);
+    return {
+      msg: 'Lấy tất cả bình luận thành công!',
+      statusCode: 200,
+      data: result,
+    };
+  } catch (error) {
+    return {
+      msg: 'Xảy ra lỗi trong quá trình lấy thông tin',
+      statusCode: 300,
+    };
+  }
+};
+
 module.exports = {
   GetAccount,
   DeleteAccount,
@@ -314,4 +316,5 @@ module.exports = {
   UpdateStatusPost,
   getDetailPost,
   detetePost,
+  getComment,
 };

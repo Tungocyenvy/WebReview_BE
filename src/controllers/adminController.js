@@ -89,6 +89,19 @@ const detetePost = async (req, res, next) => {
   return controller.sendSuccess(res, {}, resService.statusCode, resService.msg);
 };
 
+const getComment = async (req, res, next) => {
+  const resService = await adminService.getComment();
+  if (resService.statusCode === 200) {
+    return controller.sendSuccess(
+      res,
+      resService.data,
+      resService.statusCode,
+      resService.msg,
+    );
+  }
+  return controller.sendSuccess(res, {}, resService.statusCode, resService.msg);
+};
+
 module.exports = {
   getAccount,
   deleteAccount,
@@ -96,4 +109,5 @@ module.exports = {
   updateStatusPost,
   getDetailPost,
   detetePost,
+  getComment,
 };

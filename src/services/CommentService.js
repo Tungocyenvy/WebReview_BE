@@ -14,6 +14,24 @@ const getRandomString = (length, base) => {
   }
   return 'CMT' + result;
 };
+//get comment theo groupID
+const GetAllComment = async () => {
+  try {
+    console.log('Lay cmt');
+    const post = await Post.find({});
+    const data = post[0].Group;
+    console.log(data);
+    return {
+      msg: 'oke!',
+      statusCode: 300,
+    };
+  } catch (error) {
+    return {
+      msg: 'koke!',
+      statusCode: 300,
+    };
+  }
+};
 //get comment theo postId
 const GetComment = async (body) => {
   let { PostId } = body;
@@ -407,4 +425,5 @@ module.exports = {
   UpdateReply,
   DeleteComment,
   DeleteReply,
+  GetAllComment,
 };

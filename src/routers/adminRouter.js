@@ -16,4 +16,5 @@ router.get('/getPost/:GroupId/:PostId', adminController.getDetailPost);
 
 router.delete('/deletePost/:GroupId/:PostId', adminController.detetePost);
 
+router.get('/getComment', adminController.getComment);
 module.exports = router;
