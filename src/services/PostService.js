@@ -181,12 +181,12 @@ const getPost = async (body) => {
     //lấy ra 15 bài review mới nhất
     let topreview = Array.from(review);
     topreview.reverse();
-    topreview = topreview.slice(0, 16);
+    topreview = topreview.slice(0, 15);
 
     //Lấy ra 5 bài kinh nghiệm mới nhất
     let topexp = Array.from(exp);
     topexp.reverse();
-    topexp = topexp.slice(0, 6);
+    topexp = topexp.slice(0, 5);
 
     //Lấy ra 5 bài trong forum mới nhất
     let topfrm = Array.from(forum);
