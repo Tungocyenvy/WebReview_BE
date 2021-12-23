@@ -241,6 +241,8 @@ const getComment = async (body) => {
     const post = await Post.find({});
     const listGroup = post[0].Group; //Group
     let result = [];
+
+    //Không có dữ liệu trong bảng Post
     if (listGroup.length <= 0) {
       return {
         msg: 'Không có dữ liệu',
@@ -255,6 +257,8 @@ const getComment = async (body) => {
 
       let data = listPost.Post;
       data = data.filter((x) => x.Status === true && x.IsShow === true);
+
+      //Group[i] có bài viết
       if (data.length > 0) {
         let dataPost = [];
         for (var k in data) {
@@ -263,7 +267,9 @@ const getComment = async (body) => {
           let lstcomment = await Comment.find({ PostId: postId });
           let rs = [];
           let countCmt = lstcomment.length;
-          if (lstcomment) {
+
+          //Bài viết có comment
+          if (countCmt > 0) {
             for (var item in lstcomment) {
               const comment = lstcomment[item];
               const cmtId = comment._id;
@@ -280,10 +286,8 @@ const getComment = async (body) => {
               rs.push(dataCmt);
               var replys = comment.Reply;
               countCmt += replys.length;
-              //let result = [];
               for (var k in replys) {
                 const reply = replys[k];
-
                 const accountId1 = reply.AccountId;
                 const account1 = await Account.findOne({ _id: accountId1 });
                 FullName = account1.FullName;
@@ -299,14 +303,18 @@ const getComment = async (body) => {
                 rs.push(dataCmt);
               }
             }
+            let datatmp = { Title: postTitle, Comment: rs, CountCmt: countCmt };
+            dataPost.push(datatmp);
           }
-          let datatmp = { Title: postTitle, Comment: rs, CountCmt: countCmt };
-          dataPost.push(datatmp);
           //console.log('dataPost');
           //console.log(dataPost);
         }
-        let tmp = { groupId, data: dataPost };
-        result.push(tmp);
+
+        //<0 tất cả bài viết trong group[i] không có cmt
+        if (dataPost.length > 0) {
+          let tmp = { groupId, data: dataPost };
+          result.push(tmp);
+        }
       }
     }
     //console.log(result);
