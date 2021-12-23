@@ -244,10 +244,12 @@ const getComment = async (body) => {
     for (var item in listGroup) {
       //object
       let listPost = listGroup[item];
-      console.log(listPost);
+
       let groupId = listPost.Id; //id : object
 
       let data = listPost.Post;
+      data = data.filter((x) => x.Status === true && x.IsShow === true);
+
       let dataPost = [];
       for (var k in data) {
         let postId = data[k].Id;
