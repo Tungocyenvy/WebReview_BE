@@ -241,73 +241,92 @@ const getComment = async (body) => {
     const post = await Post.find({});
     const listGroup = post[0].Group; //Group
     let result = [];
+
+    //Không có dữ liệu trong bảng Post
+    if (listGroup.length <= 0) {
+      return {
+        msg: 'Không có dữ liệu',
+        statusCode: 300,
+      };
+    }
     for (var item in listGroup) {
       //object
       let listPost = listGroup[item];
-
       let groupId = listPost.Id; //id : object
-
       let data = listPost.Post;
       data = data.filter((x) => x.Status === true && x.IsShow === true);
+      //Group[i] có bài viết
+      if (data.length > 0) {
+        let dataPost = [];
+        for (var k in data) {
+          let postId = data[k].Id;
+          let postTitle = data[k].Title;
+          let lstcomment = await Comment.find({ PostId: postId });
+          let rs = [];
+          let countCmt = lstcomment.length;
 
-      let dataPost = [];
-      for (var k in data) {
-        let postId = data[k].Id;
-        let postTitle = data[k].Title;
-        let lstcomment = await Comment.find({ PostId: postId });
-        let rs = [];
-        let countCmt = lstcomment.length;
-        if (lstcomment) {
-          for (var item in lstcomment) {
-            const comment = lstcomment[item];
-            const cmtId = comment._id;
-            const accountId = comment.AccountId;
-            const account = await Account.findOne({ _id: accountId });
-            let FullName = account.FullName;
-            let cmtContent = comment.Content;
-            let dataCmt = {
-              cmtId,
-              FullName,
-              Content: cmtContent,
-              IsReply: false,
-            };
-            rs.push(dataCmt);
-            var replys = comment.Reply;
-            countCmt += replys.length;
-            //let result = [];
-            for (var k in replys) {
-              const reply = replys[k];
-
-              const accountId1 = reply.AccountId; //nhớ sưa chữ email lại nha :v
-              const account1 = await Account.findOne({ _id: accountId1 });
-              FullName = account1.FullName;
-              rplContent = reply.Content;
-              rplId = reply._id;
-              dataCmt = {
+          //Bài viết có comment
+          if (countCmt > 0) {
+            for (var item in lstcomment) {
+              const comment = lstcomment[item];
+              const cmtId = comment._id;
+              const accountId = comment.AccountId;
+              const account = await Account.findOne({ _id: accountId });
+              let FullName = account.FullName;
+              let cmtContent = comment.Content;
+              let dataCmt = {
                 cmtId,
                 FullName,
-                Content: rplContent,
-                IsReply: true,
-                replyId: rplId,
+                Content: cmtContent,
+                IsReply: false,
               };
               rs.push(dataCmt);
+              var replys = comment.Reply;
+              countCmt += replys.length;
+              for (var k in replys) {
+                const reply = replys[k];
+                const accountId1 = reply.AccountId;
+                const account1 = await Account.findOne({ _id: accountId1 });
+                FullName = account1.FullName;
+                rplContent = reply.Content;
+                rplId = reply._id;
+                dataCmt = {
+                  cmtId,
+                  FullName,
+                  Content: rplContent,
+                  IsReply: true,
+                  replyId: rplId,
+                };
+                rs.push(dataCmt);
+              }
             }
+            let datatmp = { Title: postTitle, Comment: rs, CountCmt: countCmt };
+            dataPost.push(datatmp);
           }
+          //console.log('dataPost');
+          //console.log(dataPost);
         }
-        let datatmp = { Title: postTitle, Comment: rs, CountCmt: countCmt };
-        dataPost.push(datatmp);
-        //console.log('dataPost');
-        //console.log(dataPost);
+
+        //<0 tất cả bài viết trong group[i] không có cmt
+        if (dataPost.length > 0) {
+          let tmp = { groupId, data: dataPost };
+          result.push(tmp);
+        }
       }
-      let tmp = { groupId, data: dataPost };
-      result.push(tmp);
     }
     //console.log(result);
-    return {
-      msg: 'Lấy tất cả bình luận thành công!',
-      statusCode: 200,
-      data: result,
-    };
+    if (result.length <= 0) {
+      return {
+        msg: 'Không có dữ liệu!',
+        statusCode: 300,
+      };
+    } else {
+      return {
+        msg: 'Lấy tất cả bình luận thành công!',
+        statusCode: 200,
+        data: result,
+      };
+    }
   } catch (error) {
     return {
       msg: 'Xảy ra lỗi trong quá trình lấy thông tin',
