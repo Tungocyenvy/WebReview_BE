@@ -252,12 +252,9 @@ const getComment = async (body) => {
     for (var item in listGroup) {
       //object
       let listPost = listGroup[item];
-      console.log(listPost);
       let groupId = listPost.Id; //id : object
-
       let data = listPost.Post;
       data = data.filter((x) => x.Status === true && x.IsShow === true);
-
       //Group[i] có bài viết
       if (data.length > 0) {
         let dataPost = [];
