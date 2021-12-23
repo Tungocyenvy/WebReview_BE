@@ -244,14 +244,17 @@ const getComment = async (body) => {
     for (var item in listGroup) {
       //object
       let listPost = listGroup[item];
-      let groupId = listPost.groupId; //id : object
+      console.log(listPost);
+      let groupId = listPost.Id; //id : object
+
       let data = listPost.Post;
       let dataPost = [];
       for (var k in data) {
         let postId = data[k].Id;
-        let postTilte = data[k].Title;
+        let postTitle = data[k].Title;
         let lstcomment = await Comment.find({ PostId: postId });
         let rs = [];
+        let countCmt = lstcomment.length;
         if (lstcomment) {
           for (var item in lstcomment) {
             const comment = lstcomment[item];
@@ -268,9 +271,11 @@ const getComment = async (body) => {
             };
             rs.push(dataCmt);
             var replys = comment.Reply;
+            countCmt += replys.length;
             //let result = [];
             for (var k in replys) {
               const reply = replys[k];
+
               const accountId1 = reply.AccountId; //nhớ sưa chữ email lại nha :v
               const account1 = await Account.findOne({ _id: accountId1 });
               FullName = account1.FullName;
@@ -287,15 +292,15 @@ const getComment = async (body) => {
             }
           }
         }
-        let datatmp = { Tilte: postTilte, Comment: rs };
+        let datatmp = { Title: postTitle, Comment: rs, CountCmt: countCmt };
         dataPost.push(datatmp);
-        console.log('dataPost');
-        console.log(dataPost);
+        //console.log('dataPost');
+        //console.log(dataPost);
       }
       let tmp = { groupId, data: dataPost };
       result.push(tmp);
     }
-    console.log(result);
+    //console.log(result);
     return {
       msg: 'Lấy tất cả bình luận thành công!',
       statusCode: 200,
