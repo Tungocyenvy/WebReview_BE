@@ -7,7 +7,8 @@ const { findOneAndUpdate } = require('../models/accountModel');
 //ACCOUNT
 const GetAccount = async () => {
   try {
-    const accounts = await Account.find({ IsAdmin: false });
+    const accounts = await Account.find({ IsAdmin: false, IsDelete: false });
+    console.log(accounts);
     if (!accounts) {
       return {
         msg: 'Không có người dùng nào!',
