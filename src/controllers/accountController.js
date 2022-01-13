@@ -86,6 +86,15 @@ const updateUser = async (req, res, next) => {
   return controller.sendSuccess(res, {}, resService.statusCode, resService.msg);
 };
 
+// thiên test
+const getTestDataUSer = async (req, res, next) => {
+  const resService = await accountService.getTestUserDataService({});
+  if (resService.statusCode === 200) {
+    return controller.sendSuccessTest(res, resService.data);
+  }
+  return controller.sendSuccess(res, {});
+};
+
 module.exports = {
   signup,
   signin,
@@ -93,4 +102,5 @@ module.exports = {
   changePassword,
   getDataUSer,
   updateUser,
+  getTestDataUSer,
 };

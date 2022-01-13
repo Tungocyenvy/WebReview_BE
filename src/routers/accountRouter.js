@@ -35,5 +35,7 @@ router.post(
   validate.validateBody(accountValidate.updateuser),
   accountController.updateUser,
 );
+// api này để thiên test thôi
+router.get('/testGetUser', accountController.getTestDataUSer);
 
 module.exports = router;

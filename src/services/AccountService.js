@@ -266,6 +266,30 @@ const UpdateUserService = async (AccountId, body) => {
   }
 };
 
+//thiên nè
+
+const getTestUserDataService = async () => {
+  try {
+    const accounts = await Account.find({});
+    if (!accounts) {
+      return {
+        msg: 'Không có người dùng nào!',
+        statusCode: 300,
+      };
+    }
+    return {
+      msg: 'Lấy tài khoản người dùng thành công',
+      statusCode: 200,
+      data: { accounts },
+    };
+  } catch (error) {
+    return {
+      msg: 'Lỗi trong quá trình lấy tài khoản người dùng',
+      statusCode: 300,
+    };
+  }
+};
+
 module.exports = {
   SignupService,
   SigninService,
@@ -273,4 +297,5 @@ module.exports = {
   ChangePasswordService,
   getUserDataService,
   UpdateUserService,
+  getTestUserDataService,
 };
