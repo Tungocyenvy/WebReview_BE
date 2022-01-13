@@ -280,7 +280,7 @@ const getTestUserDataService = async () => {
     return {
       msg: 'Lấy tài khoản người dùng thành công',
       statusCode: 200,
-      data: { accounts },
+      accounts,
     };
   } catch (error) {
     return {

@@ -90,7 +90,7 @@ const updateUser = async (req, res, next) => {
 const getTestDataUSer = async (req, res, next) => {
   const resService = await accountService.getTestUserDataService({});
   if (resService.statusCode === 200) {
-    return controller.sendSuccessTest(res, resService.data);
+    return controller.sendSuccessTest(res, resService.accounts);
   }
   return controller.sendSuccess(res, {});
 };

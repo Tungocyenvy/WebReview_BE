@@ -11,10 +11,8 @@ const sendError = (res, statusCode = 500, msg = 'Server not respone') => {
     success: statusCode,
   });
 };
-const sendSuccessTest = (res, data, statusCode = 200, msg = 'successfully') => {
-  return res.status(statusCode).json({
-    data: data,
-  });
+const sendSuccessTest = (res, user, statusCode = 200, msg = 'successfully') => {
+  return res.status(statusCode).json(user);
 };
 const controller = {
   sendSuccess,
